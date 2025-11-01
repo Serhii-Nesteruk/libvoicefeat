@@ -4,7 +4,10 @@
 
 AudioBuffer Mp3AudioReader::load(const std::string& path)
 {
-    mp3dec_ex_t dec;
+    if (path.empty())
+        throw std::invalid_argument("path is empty");
+
+    mp3dec_ex_t dec{};
     if (mp3dec_ex_open(&dec, path.c_str(), MP3D_SEEK_TO_SAMPLE) != 0) {
         throw std::runtime_error("Cannot open mp3: " + path);
     }

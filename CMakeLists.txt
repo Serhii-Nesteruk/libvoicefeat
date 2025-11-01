@@ -14,7 +14,7 @@ add_executable(untitled2 main.cpp
         src/wav_audio_reader.cpp
         include/mp3_audio_reader.h
         src/mp3_audio_reader.cpp
-        src/minimp3_impl.cpp)
+        src/minimp3_single.cpp)
 
 target_include_directories(untitled2 PRIVATE
         ${CMAKE_SOURCE_DIR}/include
