@@ -1,5 +1,5 @@
 #include "../include/mp3_audio_reader.h"
-#include "../third_party/minimp3_ex.h"
+#include "../third_party/minimp3/minimp3_ex.h"
 #include <stdexcept>
 
 AudioBuffer Mp3AudioReader::load(const std::string& path)
