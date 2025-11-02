@@ -15,7 +15,7 @@ used in **voice identification**, **speech recognition**, and general **audio an
 - 🔊 **Audio input support**
     - WAV (PCM)
     - MP3 (via [minimp3](https://github.com/lieff/minimp3))
-- 🎚 **Framing and windowing** (Hamming, Hann)
+- 🎚 **Framing and windowing** (Hamming)
 - 🎛 **Spectral transforms** (STFT / DFT)
 - 🎧 **MFCC computation**
     - Mel filterbank
@@ -40,7 +40,33 @@ make
 
 
 ### 2️⃣ Example
-Temporary empty section
+```c++
+int main() {
+    using namespace libmfcc;
+
+    std::filesystem::path inputFile("../../data/common_voice_en_42698961.mp3");
+    audio::Mp3AudioReader reader;
+    auto audio = reader.load(inputFile);
+
+    dsp::FixedFrameExtractor extractor(400, 160);
+    auto frames = extractor.extract(audio);
+
+    dsp::HammingWindow window(400);
+    for (auto& f : frames) window.apply(f.data);
+
+    dsp::FFTTransformer fft;
+    dsp::DFTTransformer dft;
+
+    auto mfcc_fft = features::computeMFCC(frames, audio.sampleRate, fft);
+    auto mfcc_dft = features::computeMFCC(frames, audio.sampleRate, dft);
+
+    std::cout << "FFT MFCC frames: " << mfcc_fft.size() << "\n";
+    std::cout << "DFT MFCC frames: " << mfcc_dft.size() << "\n";
+
+    return 0;
+}
+
+```
 
 ## 📊 MFCC Output
 

@@ -26,5 +26,4 @@ namespace libmfcc::features
         int nMels = 26,
         int nCoeffs = 13
     );
-
 }
