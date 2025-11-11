@@ -13,15 +13,36 @@ used in **voice identification**, **speech recognition**, and general **audio an
 ## 🚀 Features
 
 - 🔊 **Audio input support**
-    - WAV (PCM)
-    - MP3 (via [minimp3](https://github.com/lieff/minimp3))
+  - WAV (PCM)
+  - MP3 (via [minimp3](https://github.com/lieff/minimp3))
 - 🎚 **Framing and windowing** (Hamming)
 - 🎛 **Spectral transforms** (STFT / DFT)
 - 🎧 **MFCC computation**
-    - Mel filterbank
-    - Log-scaled energy
-    - DCT-II cepstral transformation
+  - Mel filterbank
+  - Log-scaled energy
+  - DCT-II cepstral transformation
 - 🧠 Designed for **speaker recognition, ASR, and ML feature pipelines**
+
+---
+
+## ⚙️ Audio Precision Notice
+
+Currently, all audio readers in **libmfcc** decode input into **16-bit PCM** format  
+(standard `int16_t` samples, normalized to the range **[-1.0, 1.0]**).
+
+This precision is **fully sufficient for speech and voice recognition**,  
+because human speech typically occupies frequencies up to ~8 kHz,  
+and 16-bit quantization already provides a **96 dB dynamic range**,  
+which is well above the signal-to-noise ratio of microphones used in speech datasets  
+(e.g., Common Voice, LibriSpeech).
+
+However, 16-bit depth is **limited** for tasks such as:
+
+- 🎶 **Studio-grade audio processing**
+- 🎻 **Music transcription or mastering**
+- 🧪 **Acoustic analysis requiring >100 dB precision**
+
+Support for **24-bit / 32-bit float** decoding is planned in future releases.
 
 ---
 
@@ -35,64 +56,3 @@ cd libmfcc
 mkdir build && cd build
 cmake ..
 make 
-```
-
-
-
-### 2️⃣ Example
-```c++
-int main() {
-    using namespace libmfcc;
-
-    std::filesystem::path inputFile("../../data/common_voice_en_42698961.mp3");
-    audio::Mp3AudioReader reader;
-    auto audio = reader.load(inputFile);
-
-    dsp::FixedFrameExtractor extractor(400, 160);
-    auto frames = extractor.extract(audio);
-
-    dsp::HammingWindow window(400);
-    for (auto& f : frames) window.apply(f.data);
-
-    dsp::FFTTransformer fft;
-    dsp::DFTTransformer dft;
-
-    auto mfcc_fft = features::computeMFCC(frames, audio.sampleRate, fft);
-    auto mfcc_dft = features::computeMFCC(frames, audio.sampleRate, dft);
-
-    std::cout << "FFT MFCC frames: " << mfcc_fft.size() << "\n";
-    std::cout << "DFT MFCC frames: " << mfcc_dft.size() << "\n";
-
-    return 0;
-}
-
-```
-
-## 📊 MFCC Output
-
-`computeMFCC()` returns a **matrix** of size `N_frames × N_coeffs`,  
-where each row represents the cepstral coefficients for one audio frame.
-
-**Example:**
-```
-Frame 0: [ -5.32, 0.94, 0.82, -0.48, ... ]
-Frame 1: [ -4.91, 1.01, 0.73, -0.52, ... ]
-...
-```
-
-## 🧠 Typical Applications
-
-- 🎙 **Speaker identification**
-- 🗣 **Automatic Speech Recognition (ASR)**
-- 🧩 **Audio classification / emotion recognition**
-- 🧾 **Preprocessing for ML/DL models**
-
----
-
-## 🪪 License
-
-**libmfcc** is released under the **MIT License**.  
-The embedded `minimp3` decoder is distributed under the **Unlicense (Public Domain)**.
-
-See:
-- [`LICENSE`](./LICENSE.txt)
