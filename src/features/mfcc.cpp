@@ -125,18 +125,20 @@ namespace libmfcc::features
         if (frames.empty())
             return all;
 
-        int nFft = static_cast<int>(frames[0].data.size());
+        auto firstSpectrum = transformer.transform(frames.front().data);
+        const int nFft = static_cast<int>(firstSpectrum.size());
+        const int nFreqs = nFft / 2 + 1;
+
         std::vector<std::vector<float>> melFilters;
         buildMelFilterbank(sampleRate, nFft, nMels, melFilters);
 
         all.reserve(frames.size());
 
-        for (const auto& f : frames)
+        auto processSpectrum = [&](const std::vector<std::complex<float>>& spec)
         {
-            auto spec = transformer.transform(f.data);
             auto mag = magnitude(spec);
-            if ((int)mag.size() > nFft / 2 + 1)
-                mag.resize(nFft / 2 + 1);
+            if (static_cast<int>(mag.size()) > nFreqs)
+                mag.resize(nFreqs);
 
             auto mel = applyMel(melFilters, mag);
 
@@ -145,6 +147,14 @@ namespace libmfcc::features
 
             auto coeffs = dctII(mel, nCoeffs);
             all.push_back(std::move(coeffs));
+        };
+
+        processSpectrum(firstSpectrum);
+
+        for (std::size_t i = 1; i < frames.size(); ++i)
+        {
+            auto spec = transformer.transform(frames[i].data);
+            processSpectrum(spec);
         }
 
         return all;
