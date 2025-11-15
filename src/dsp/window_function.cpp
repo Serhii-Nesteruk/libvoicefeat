@@ -1,4 +1,6 @@
 #include "libmfcc/dsp/window_functiion.h"
+
+#include <algorithm>
 #include <cmath>
 
 using namespace libmfcc::dsp;
@@ -30,8 +32,8 @@ WindowFunction::WindowFunction(int size, WindowType type)
 
 void WindowFunction::apply(std::vector<float>& frame) const
 {
-    const int N = (int)frame.size();
-    for (int i = 0; i < N; ++i)
+    const auto N = std::min(frame.size(), _w.size());
+    for (std::size_t i = 0; i < N; ++i)
         frame[i] *= _w[i];
 }
 
