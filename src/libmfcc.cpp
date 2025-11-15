@@ -21,10 +21,9 @@ namespace
     using namespace libmfcc;
     using namespace libmfcc::utils;
 
-    libmfcc::audio::AudioBuffer load_audio(const std::filesystem::path& path, compat::source_location loc)
+    libmfcc::audio::AudioBuffer load_audio(const std::filesystem::path& path)
     {
-        const auto resolved = resolve_from_callsite(path, loc);
-        const auto extStr = resolved.extension().string();
+        const auto extStr = path.extension().string();
         std::string ext;
         ext.resize(extStr.size());
         std::transform(extStr.begin(), extStr.end(), ext.begin(), [](unsigned char c)
@@ -35,12 +34,12 @@ namespace
         if (ext == ".wav")
         {
             libmfcc::audio::WavAudioReader reader;
-            return reader.load(resolved);
+            return reader.load(path);
         }
         if (ext == ".mp3")
         {
             libmfcc::audio::Mp3AudioReader reader;
-            return reader.load(resolved);
+            return reader.load(path);
         }
 
         throw std::invalid_argument("Unsupported audio format: " + path.string());
@@ -78,9 +77,9 @@ namespace
 
 namespace libmfcc
 {
-    MfccMatrix compute_file_mfcc(const std::filesystem::path& path, const MfccConfig& config, compat::source_location loc)
+    MfccMatrix compute_file_mfcc(const std::filesystem::path& path, const MfccConfig& config)
     {
-        auto audio = load_audio(path, loc);
+        auto audio = load_audio(path);
         return compute_buffer_mfcc(audio, config);
     }
 

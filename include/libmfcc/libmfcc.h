@@ -11,8 +11,7 @@ namespace libmfcc {
 
     [[nodiscard]] MfccMatrix compute_file_mfcc(
         const std::filesystem::path& path,
-        const MfccConfig& config = {},
-        compat::source_location loc = compat::source_location::current()
+        const MfccConfig& config = {}
     );
 
     [[nodiscard]] MfccMatrix compute_buffer_mfcc(
