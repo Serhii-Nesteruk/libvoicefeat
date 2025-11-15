@@ -27,30 +27,28 @@ used in **voice identification**, **speech recognition**, and general **audio an
 
 ### 2️⃣ Example
 ```c++
-int main() {
-using namespace libmfcc;
+int main()
+{
+    try
+    {
+        const std::filesystem::path audioPath{"./data/common_voice_en_42698961.mp3"};
+        libmfcc::MfccConfig config;
+        config.useDeltas = true;
+        config.useDeltaDeltas = true;
 
-    std::filesystem::path inputFile("./data/common_voice_en_42698961.mp3");
-    audio::Mp3AudioReader reader;
-    auto audio = reader.load(inputFile);
-
-    dsp::FixedFrameExtractor extractor(400, 160);
-    auto frames = extractor.extract(audio);
-
-    dsp::HammingWindow window(400);
-    for (auto& f : frames) window.apply(f.data);
-
-    dsp::FFTTransformer fft;
-    dsp::DFTTransformer dft;
-
-    auto mfcc_fft = features::computeMFCC(frames, audio.sampleRate, fft);
-    auto mfcc_dft = features::computeMFCC(frames, audio.sampleRate, dft);
-
-    std::cout << "FFT MFCC frames: " << mfcc_fft.size() << "\n";
-    std::cout << "DFT MFCC frames: " << mfcc_dft.size() << "\n";
+        auto mfcc = libmfcc::compute_file_mfcc(audioPath, config);
+        std::cout << "Frames: " << mfcc.size() << std::endl;
+        std::cout << "Coefficients per frame: " << (mfcc.empty() ? 0 : mfcc.front().size()) << std::endl;
+    }
+    catch (const std::exception& e)
+    {
+        std::cerr << "Failed to compute MFCC: " << e.what() << std::endl;
+        return 1;
+    }
 
     return 0;
 }
+
 ```
 
 ## ⚙️ Audio Precision Notice
