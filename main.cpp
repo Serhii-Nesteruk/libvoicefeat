@@ -12,7 +12,7 @@ int main()
         libvoicefeat::CepstralConfig config;
         config.useDeltas = true;
         config.useDeltaDeltas = true;
-
+        
         auto mfcc = libvoicefeat::compute_file_mfcc(audioPath, config);
         std::cout << "Frames: " << mfcc.size() << std::endl;
         std::cout << "Coefficients per frame: " << (mfcc.empty() ? 0 : mfcc.front().size()) << std::endl;

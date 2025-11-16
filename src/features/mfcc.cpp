@@ -1,6 +1,7 @@
 #include "libvoicefeat/features/mfcc.h"
 
 #include "libvoicefeat/config.h"
+#include "libvoicefeat/features/filterbanks/filterbank.h"
 
 #include <algorithm>
 #include <cmath>
@@ -12,100 +13,6 @@ namespace
 {
     constexpr double kLogEps = 1e-10;
     constexpr double kPi = 3.14159265358979323846;
-
-    using libvoicefeat::MelScale;
-
-    inline double hz_to_mel_htk(double hz)
-    {
-        return 2595.0 * std::log10(1.0 + hz / 700.0);
-    }
-
-    inline double mel_to_hz_htk(double mel)
-    {
-        return 700.0 * (std::pow(10.0, mel / 2595.0) - 1.0);
-    }
-
-    inline double hz_to_mel_slaney(double hz)
-    {
-        const double f_sp = 200.0 / 3.0;
-        const double min_log_hz = 1000.0;
-        const double min_log_mel = min_log_hz / f_sp;
-        const double log_step = std::log(6.4) / 27.0;
-
-        double mel = hz / f_sp;
-        if (hz >= min_log_hz)
-        {
-            mel = min_log_mel + std::log(hz / min_log_hz) / log_step;
-        }
-        return mel;
-    }
-
-    inline double mel_to_hz_slaney(double mel)
-    {
-        const double f_sp = 200.0 / 3.0;
-        const double min_log_hz = 1000.0;
-        const double min_log_mel = min_log_hz / f_sp;
-        const double log_step = std::log(6.4) / 27.0;
-
-        double hz = mel * f_sp;
-        if (mel >= min_log_mel)
-            hz = min_log_hz * std::exp(log_step * (mel - min_log_mel));
-        return hz;
-    }
-
-    std::vector<std::vector<double>> buildMelFilterbank(
-        int sampleRate,
-        int nFft,
-        int nMels,
-        double minFreq,
-        double maxFreq,
-        MelScale scale)
-    {
-        const int nFreqs = nFft / 2 + 1;
-        std::vector<std::vector<double>> filters(nMels, std::vector<double>(nFreqs, 0.0));
-        const double melMin = libvoicefeat::features::hzToMel(minFreq, scale);
-        const double melMax = libvoicefeat::features::hzToMel(maxFreq, scale);
-
-        std::vector<double> melPoints(nMels + 2);
-        for (int i = 0; i < nMels + 2; ++i)
-        {
-            melPoints[i] = melMin + (melMax - melMin) * i / (nMels + 1);
-        }
-
-        std::vector<double> hzPoints(nMels + 2);
-        for (int i = 0; i < nMels + 2; ++i)
-        {
-            hzPoints[i] = libvoicefeat::features::melToHz(melPoints[i], scale);
-        }
-
-        std::vector<int> bins(nMels + 2);
-        for (int i = 0; i < nMels + 2; ++i)
-        {
-            const double freq = std::clamp(hzPoints[i], 0.0, static_cast<double>(sampleRate) / 2.0);
-            bins[i] = static_cast<int>(std::floor((nFft + 1) * freq / sampleRate));
-            bins[i] = std::clamp(bins[i], 0, nFreqs - 1);
-        }
-
-        for (int m = 1; m <= nMels; ++m)
-        {
-            const int left = bins[m - 1];
-            const int center = bins[m];
-            const int right = bins[m + 1];
-
-            for (int k = left; k < center; ++k)
-            {
-                const double denom = std::max(1, center - left);
-                filters[m - 1][k] = (k - left) / denom;
-            }
-
-            for (int k = center; k < right; ++k)
-            {
-                const double denom = std::max(1, center - left);
-                filters[m - 1][k] = (k - left) / denom;
-            }
-        }
-        return filters;
-    }
 
     std::vector<double> magnitude(const std::vector<std::complex<float>>& spec, int nFreqs)
     {
@@ -130,7 +37,6 @@ namespace
             {
                 sum += mag[k] * f[k];
             }
-            return mag;
             mel[m] = sum;
         }
         return mel;
@@ -158,30 +64,6 @@ namespace
 
 namespace libvoicefeat::features
 {
-    double hzToMel(double hz, MelScale scale)
-    {
-        switch (scale)
-        {
-        case MelScale::HTK:
-            return hz_to_mel_htk(hz);
-        case MelScale::Slaney:
-        default:
-            return hz_to_mel_slaney(hz);
-        }
-    }
-
-    double melToHz(double mel, MelScale scale)
-    {
-        switch (scale)
-        {
-        case MelScale::HTK:
-            return mel_to_hz_htk(mel);
-        case MelScale::Slaney:
-        default:
-            return mel_to_hz_slaney(mel);
-        }
-    }
-
     FeatureMatrix computeMFCC(const std::vector<libvoicefeat::dsp::Frame>& frames,
                            const libvoicefeat::dsp::ITransformer& transformer,
                            const FeatureOptions& options)
@@ -205,8 +87,15 @@ namespace libvoicefeat::features
         if (opts.maxFreq <= opts.minFreq)
             opts.maxFreq = opts.minFreq + 1.0;
 
-        const auto filters = buildMelFilterbank(opts.sampleRate, nFft, opts.numFilters, opts.minFreq, opts.maxFreq, opts.melScale);
+        FilterbankParams filterParams{};
+        filterParams.sampleRate = opts.sampleRate;
+        filterParams.nFft = nFft;
+        filterParams.numFilters = opts.numFilters;
+        filterParams.minFreq = opts.minFreq;
+        filterParams.maxFreq = opts.maxFreq;
 
+        const auto filterbank = createFilterbank(opts.filterbank, opts.melScale);
+        const auto filters = filterbank->build(filterParams);
         all.reserve(frames.size());
 
         const auto process = [&](const libvoicefeat::dsp::Frame& frame,

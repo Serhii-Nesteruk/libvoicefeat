@@ -61,15 +61,16 @@ namespace
         samples.swap(emphasized);
     }
 
-    features::FeatureOptions build_options(int sampleRate, const CepstralConfig& config)
+    FeatureOptions build_options(int sampleRate, const CepstralConfig& config)
     {
-        features::FeatureOptions opts;
+        FeatureOptions opts;
         opts.sampleRate = sampleRate;
         opts.numCoeffs = config.numCoeffs;
         opts.numFilters = config.numFilters;
         opts.minFreq = config.minFreq;
         opts.maxFreq = config.maxFreq > 0.0f ? config.maxFreq : static_cast<float>(sampleRate) / 2.0f;
         opts.includeEnergy = config.includeEnergy;
+        opts.filterbank = config.filterbank;
         opts.melScale = config.melScale;
         return opts;
     }

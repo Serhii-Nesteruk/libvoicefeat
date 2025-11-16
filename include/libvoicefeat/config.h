@@ -29,6 +29,18 @@ namespace libvoicefeat {
         Slaney
     };
 
+    struct FeatureOptions
+    {
+        int sampleRate                      = 16000;
+        int numFilters                      = 26;
+        int numCoeffs                       = 13;
+        double minFreq                      = 0.0;
+        double maxFreq                      = 8000.0;
+        bool includeEnergy                  = true;
+        FilterbankType filterbank           = FilterbankType::Mel;
+        MelScale melScale                   = MelScale::Slaney;
+    };
+
     struct CepstralConfig {
         CepstralType type               = CepstralType::MFCC;     // type of cepstral feature (MFCC, LFCC, GFCC, PNCC, PLP)
 

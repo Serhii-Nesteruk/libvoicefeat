@@ -22,11 +22,19 @@ set(libvoicefeat_SOURCES
         ${SRC_DIR}/dsp/dft_transformer.cpp
 
         # Features
+        ${SRC_DIR}/features/mel_scale.cpp
+        ${SRC_DIR}/features/filterbanks/bark_filterbank.cpp
+        ${SRC_DIR}/features/filterbanks/filterbank_factory.cpp
+        ${SRC_DIR}/features/filterbanks/filterbank_utils.cpp
+        ${SRC_DIR}/features/filterbanks/gammatone_filterbank.cpp
+        ${SRC_DIR}/features/filterbanks/linear_filterbank.cpp
+        ${SRC_DIR}/features/filterbanks/mel_filterbank.cpp
         ${SRC_DIR}/features/mfcc.cpp
         ${SRC_DIR}/features/delta.cpp
 
         # Facade
         ${SRC_DIR}/libvoicefeat.cpp
+        src/features/filterbanks/bark_filterbank.cpp
 )
 
 add_library(libvoicefeat ${libvoicefeat_SOURCES})
