@@ -103,7 +103,7 @@ namespace libmfcc
         if (frames.empty())
             return {};
 
-        dsp::HammingWindow window(config.frameSize);
+        dsp::HanningWindow window(config.frameSize);
         for (auto& frame : frames)
             window.apply(frame.data);
 
