@@ -1,84 +1,127 @@
-# 🎧 libmfcc — Lightweight C++ Library for MFCC Feature Extraction
+# 🎧 libvoicefeat — Lightweight C++ Library for Voice Feature Extraction (MFCC, LFCC, GFCC, PNCC-ready)
 
 [![C++17](https://img.shields.io/badge/C%2B%2B-17-blue.svg)]()
 [![License: MIT](https://img.shields.io/badge/license-MIT-green.svg)]()
 [![Platform](https://img.shields.io/badge/platform-Linux-lightgrey)]()
 
-**libmfcc** is a lightweight and fast **C++17** library for computing  
-🎵 **Mel-Frequency Cepstral Coefficients (MFCC)** — a core feature representation  
-used in **voice identification**, **speech recognition**, and general **audio analysis**.
+**libvoicefeat** is a fast and lightweight **C++17** DSP library focused on
+robust extraction of **voice features**, starting with
+🎵 **Mel-Frequency Cepstral Coefficients (MFCC)**
+and architected for future extensions such as **LFCC**, **GFCC**, **PNCC**, and **PLP**.
+
+This makes it suitable for:
+
+- 🔐 **anti-spoofing / deepfake detection**
+- 🧑‍🏫 **speaker verification & identification**
+- 🧠 **ASR pipelines**
+- 🎤 **general speech feature engineering**
 
 ---
 
 ## 🚀 Features
 
-- 🔊 **Audio input support**
-  - WAV (PCM)
-  - MP3 (via [minimp3](https://github.com/lieff/minimp3))
-- 🎚 **Framing and windowing** (Hamming)
-- 🎛 **Spectral transforms** (STFT / DFT)
-- 🎧 **MFCC computation**
-  - Mel filterbank
-  - Log-scaled energy
-  - DCT-II cepstral transformation
-- 🧠 Designed for **speaker recognition, ASR, and ML feature pipelines**
+### 🎧 Audio Input
+- WAV (PCM)
+- MP3 (via embedded minimp3)
+
+### 🎚 DSP Processing
+- Framing & Hamming window
+- Pre-emphasis
+- STFT and DFT transformers
+
+### 🎛 Cepstral Features (current)
+- MFCC extraction
+- Mel filterbank
+- Slaney & HTK mel scales
+- Log energy
+- DCT-II
+
+### 🔧 Feature Enhancements
+- Δ (Delta) coefficients
+- ΔΔ (Delta-Delta) coefficients
 
 ---
 
-### 2️⃣ Example
-```c++
+## 2️⃣ Example
+
+```cpp
+#include "libvoicefeat/libvoicefeat.h"
+
+#include <iostream>
+#include <exception>
+#include <filesystem>
+
 int main()
 {
-    try
-    {
-        const std::filesystem::path audioPath{"./data/common_voice_en_42698961.mp3"};
-        libmfcc::MfccConfig config;
-        config.useDeltas = true;
-        config.useDeltaDeltas = true;
-
-        auto mfcc = libmfcc::compute_file_mfcc(audioPath, config);
-        std::cout << "Frames: " << mfcc.size() << std::endl;
-        std::cout << "Coefficients per frame: " << (mfcc.empty() ? 0 : mfcc.front().size()) << std::endl;
-    }
-    catch (const std::exception& e)
-    {
-        std::cerr << "Failed to compute MFCC: " << e.what() << std::endl;
-        return 1;
-    }
-
-    return 0;
+      try
+      {
+      const std::filesystem::path audioPath{"./data/common_voice_en_42698961.mp3"};
+      libvoicefeat::CepstralConfig config;
+      config.useDeltas = true;
+      config.useDeltaDeltas = true;
+      
+      auto mfcc = libvoicefeat::compute_file_mfcc(audioPath, config);
+      std::cout << "Frames: " << mfcc.size() << std::endl;
+      std::cout << "Coefficients per frame: "
+      << (mfcc.empty() ? 0 : mfcc.front().size())
+      << std::endl;
+      }
+      catch (const std::exception& e)
+      {
+      std::cerr << "Failed to compute MFCC: " << e.what() << std::endl;
+      return 1;
+      }
+      
+      return 0;
 }
-
 ```
+
+---
 
 ## ⚙️ Audio Precision Notice
 
-Currently, all audio readers in **libmfcc** decode input into **16-bit PCM** format  
-(standard `int16_t` samples, normalized to the range **[-1.0, 1.0]**).
+All audio readers in **libvoicefeat** currently decode input into **16-bit PCM**
+(standard int16_t, normalized to [-1.0, 1.0]).
 
-This precision is **fully sufficient for speech and voice recognition**,  
-because human speech typically occupies frequencies up to ~8 kHz,  
-and 16-bit quantization already provides a **96 dB dynamic range**,  
-which is well above the signal-to-noise ratio of microphones used in speech datasets  
-(e.g., Common Voice, LibriSpeech).
+This precision is fully sufficient for:
 
-However, 16-bit depth is **limited** for tasks such as:
+- speech recognition
+- speaker identification
+- ASR training
+- real-time inference
 
-- 🎶 **Studio-grade audio processing**
-- 🎻 **Music transcription or mastering**
-- 🧪 **Acoustic analysis requiring >100 dB precision**
+Because speech occupies 0–8 kHz, and 16-bit PCM provides a
+96 dB dynamic range, which exceeds microphone SNR in most datasets.
 
-Support for **24-bit / 32-bit float** decoding is planned in future releases.
+### Not optimal for:
+- studio-grade processing
+- high-precision acoustic research
+- >24-bit dynamic measurements
+
+Planned: support for 24-bit / 32-bit float WAV & MP3 decoding.
 
 ---
 
 ## 🧪 Build & Usage
 
-### 1️⃣ Build
+### 1️⃣ Clone & Build
 
 ```bash
-git clone https://github.com/Serhii-Nesteruk/libmfcc.git
-cd libmfcc
+git clone https://github.com/Serhii-Nesteruk/libvoicefeat.git
+cd libvoicefeat
 mkdir build && cd build
 cmake ..
-make 
+make -j
+```
+
+### 2️⃣ Linking from your project
+
+```cmake
+find_package(libvoicefeat REQUIRED)
+target_link_libraries(your_app PRIVATE libvoicefeat::libvoicefeat)
+```
+
+---
+
+## 📄 License
+MIT — free for commercial and research use.
