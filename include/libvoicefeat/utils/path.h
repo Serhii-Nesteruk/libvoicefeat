@@ -2,13 +2,13 @@
 
 #include <filesystem>
 
-#include "libmfcc/compat/source_location.h"
+#include "libvoicefeat/compat/source_location.h"
 
-namespace libmfcc::utils {
+namespace libvoicefeat::utils {
 
     inline std::filesystem::path resolve_from_callsite(
         const std::filesystem::path& p,
-        libmfcc::compat::source_location loc = libmfcc::compat::source_location::current())
+        libvoicefeat::compat::source_location loc = libvoicefeat::compat::source_location::current())
     {
         if (p.is_absolute()) return std::filesystem::weakly_canonical(p);
 

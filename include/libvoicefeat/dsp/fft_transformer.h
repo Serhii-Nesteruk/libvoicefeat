@@ -2,7 +2,7 @@
 
 #include "transformer.h"
 
-namespace libmfcc::dsp
+namespace libvoicefeat::dsp
 {
     class FFTTransformer : public ITransformer {
     public:

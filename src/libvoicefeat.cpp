@@ -1,12 +1,12 @@
-#include "libmfcc/libmfcc.h"
+#include "libvoicefeat/libvoicefeat.h"
 
-#include "libmfcc/audio/mp3_audio_reader.h"
-#include "libmfcc/audio/wav_audio_reader.h"
-#include "libmfcc/dsp/frame_extractor.h"
-#include "libmfcc/dsp/window_functiion.h"
-#include "libmfcc/dsp/fft_transformer.h"
-#include "libmfcc/features/delta.h"
-#include "libmfcc/features/mfcc.h"
+#include "libvoicefeat/audio/mp3_audio_reader.h"
+#include "libvoicefeat/audio/wav_audio_reader.h"
+#include "libvoicefeat/dsp/frame_extractor.h"
+#include "libvoicefeat/dsp/window_functiion.h"
+#include "libvoicefeat/dsp/fft_transformer.h"
+#include "libvoicefeat/features/delta.h"
+#include "libvoicefeat/features/mfcc.h"
 
 #include <algorithm>
 #include <cctype>
@@ -14,14 +14,14 @@
 #include <string>
 #include <vector>
 
-#include "libmfcc/utils/path.h"
+#include "libvoicefeat/utils/path.h"
 
 namespace
 {
-    using namespace libmfcc;
-    using namespace libmfcc::utils;
+    using namespace libvoicefeat;
+    using namespace libvoicefeat::utils;
 
-    libmfcc::audio::AudioBuffer load_audio(const std::filesystem::path& path)
+    libvoicefeat::audio::AudioBuffer load_audio(const std::filesystem::path& path)
     {
         const auto extStr = path.extension().string();
         std::string ext;
@@ -33,12 +33,12 @@ namespace
 
         if (ext == ".wav")
         {
-            libmfcc::audio::WavAudioReader reader;
+            libvoicefeat::audio::WavAudioReader reader;
             return reader.load(path);
         }
         if (ext == ".mp3")
         {
-            libmfcc::audio::Mp3AudioReader reader;
+            libvoicefeat::audio::Mp3AudioReader reader;
             return reader.load(path);
         }
 
@@ -61,9 +61,9 @@ namespace
         samples.swap(emphasized);
     }
 
-    features::MfccOptions build_options(int sampleRate, const MfccConfig& config)
+    features::FeatureOptions build_options(int sampleRate, const CepstralConfig& config)
     {
-        features::MfccOptions opts;
+        features::FeatureOptions opts;
         opts.sampleRate = sampleRate;
         opts.numCoeffs = config.numCoeffs;
         opts.numFilters = config.numFilters;
@@ -75,15 +75,15 @@ namespace
     }
 }
 
-namespace libmfcc
+namespace libvoicefeat
 {
-    MfccMatrix compute_file_mfcc(const std::filesystem::path& path, const MfccConfig& config)
+    FeatureMatrix compute_file_mfcc(const std::filesystem::path& path, const CepstralConfig& config)
     {
         auto audio = load_audio(path);
         return compute_buffer_mfcc(audio, config);
     }
 
-    MfccMatrix compute_buffer_mfcc(const audio::AudioBuffer& audio, const MfccConfig& config)
+    FeatureMatrix compute_buffer_mfcc(const audio::AudioBuffer& audio, const CepstralConfig& config)
     {
         if (config.frameSize <= 0 || config.frameStep <= 0)
             throw std::invalid_argument("Frame size and step must be positive");

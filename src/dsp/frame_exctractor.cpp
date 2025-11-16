@@ -1,8 +1,8 @@
-#include "libmfcc/dsp/frame_extractor.h"
+#include "libvoicefeat/dsp/frame_extractor.h"
 
 #include <stdexcept>
 
-using namespace libmfcc::dsp;
+using namespace libvoicefeat::dsp;
 
 FixedFrameExtractor::FixedFrameExtractor(int windowSize, int hopSize)
     : _windowSize(windowSize), _hopSize(hopSize)

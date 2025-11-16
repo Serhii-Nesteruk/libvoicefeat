@@ -2,7 +2,7 @@
 
 #include <vector>
 
-namespace libmfcc::dsp
+namespace libvoicefeat::dsp
 {
     enum class WindowType
     {

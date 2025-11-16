@@ -1,16 +1,16 @@
-#include "libmfcc/audio/mp3_audio_reader.h"
+#include "libvoicefeat/audio/mp3_audio_reader.h"
 
 #include <filesystem>
 
 #include "minimp3_ex.h"
 #include <stdexcept>
 
-#include "libmfcc/utils/path.h"
+#include "libvoicefeat/utils/path.h"
 
-using libmfcc::compat::source_location;
-using libmfcc::utils::resolve_from_callsite;
+using libvoicefeat::compat::source_location;
+using libvoicefeat::utils::resolve_from_callsite;
 
-namespace libmfcc::audio
+namespace libvoicefeat::audio
 {
     AudioBuffer Mp3AudioReader::load(const std::filesystem::path& inputFile, source_location loc)
     {

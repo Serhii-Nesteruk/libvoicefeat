@@ -1,9 +1,9 @@
-#include "libmfcc/dsp/window_functiion.h"
+#include "libvoicefeat/dsp/window_functiion.h"
 
 #include <algorithm>
 #include <cmath>
 
-using namespace libmfcc::dsp;
+using namespace libvoicefeat::dsp;
 
 static std::vector<float> buildWindow(int size, WindowType type)
 {

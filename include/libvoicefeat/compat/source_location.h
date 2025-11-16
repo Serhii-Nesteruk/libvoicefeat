@@ -1,7 +1,7 @@
 #pragma once
 #include <string_view>
 
-namespace libmfcc::compat {
+namespace libvoicefeat::compat {
     struct source_location {
         const char* file_name_;
         const char* function_name_;

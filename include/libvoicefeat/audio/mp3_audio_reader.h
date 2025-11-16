@@ -5,12 +5,12 @@
 
 #include <filesystem>
 
-namespace libmfcc::audio
+namespace libvoicefeat::audio
 {
     class Mp3AudioReader : public IAudioReader
     {
     public:
         AudioBuffer load(const std::filesystem::path& inputFile,
-                         libmfcc::compat::source_location loc = libmfcc::compat::source_location::current()) override;
+                         libvoicefeat::compat::source_location loc = libvoicefeat::compat::source_location::current()) override;
     };
 }

@@ -1,7 +1,7 @@
-#include "libmfcc/dsp/fft_transformer.h"
+#include "libvoicefeat/dsp/fft_transformer.h"
 #include <cmath>
 
-namespace libmfcc::dsp {
+namespace libvoicefeat::dsp {
 
 void FFTTransformer::fft(std::vector<std::complex<float>>& data) const {
     const size_t N = data.size();

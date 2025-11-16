@@ -5,7 +5,7 @@
 
 #include <vector>
 
-namespace libmfcc::dsp
+namespace libvoicefeat::dsp
 {
     class IFrameExtractor
     {

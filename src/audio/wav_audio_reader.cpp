@@ -1,13 +1,13 @@
-#include "libmfcc/audio/wav_audio_reader.h"
+#include "libvoicefeat/audio/wav_audio_reader.h"
 
 #include "stdexcept"
 #include "fstream"
-#include "libmfcc/utils/path.h"
+#include "libvoicefeat/utils/path.h"
 
-using libmfcc::compat::source_location;
-using libmfcc::utils::resolve_from_callsite;
+using libvoicefeat::compat::source_location;
+using libvoicefeat::utils::resolve_from_callsite;
 
-namespace libmfcc::audio
+namespace libvoicefeat::audio
 {
     static bool fourcc_eq(const char id[4], const char* s)
     {

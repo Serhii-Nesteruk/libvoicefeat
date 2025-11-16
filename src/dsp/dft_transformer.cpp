@@ -1,7 +1,7 @@
-#include "libmfcc/dsp/dft_transformer.h"
+#include "libvoicefeat/dsp/dft_transformer.h"
 #include <cmath>
 
-namespace libmfcc::dsp {
+namespace libvoicefeat::dsp {
 
 std::vector<std::complex<float>> DFTTransformer::transform(const std::vector<float>& frame) const {
     const size_t N = frame.size();

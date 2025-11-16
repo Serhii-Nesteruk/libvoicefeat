@@ -5,7 +5,7 @@
 #include <cstdint>
 #include <filesystem>
 
-namespace libmfcc::audio
+namespace libvoicefeat::audio
 {
 #pragma pack(push, 1)
     struct RiffHeader
@@ -36,6 +36,6 @@ namespace libmfcc::audio
     {
     public:
         AudioBuffer load(const std::filesystem::path& inputFile,
-                         libmfcc::compat::source_location loc = libmfcc::compat::source_location::current()) override;
+                         libvoicefeat::compat::source_location loc = libvoicefeat::compat::source_location::current()) override;
     };
 }

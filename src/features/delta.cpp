@@ -1,14 +1,14 @@
-#include "libmfcc/features/delta.h"
+#include "libvoicefeat/features/delta.h"
 
 #include <algorithm>
 #include <cmath>
 #include <stdexcept>
 
-namespace libmfcc::features
+namespace libvoicefeat::features
 {
-    MfccMatrix computeDelta(const MfccMatrix& mfcc, int N)
+    FeatureMatrix computeDelta(const FeatureMatrix& mfcc, int N)
     {
-        MfccMatrix deltas;
+        FeatureMatrix deltas;
         if (mfcc.empty())
             return deltas;
 
@@ -17,7 +17,7 @@ namespace libmfcc::features
 
         const std::size_t T = mfcc.size();
         const std::size_t D = mfcc.front().size();
-        deltas.assign(T, MfccVector(D, 0.0f));
+        deltas.assign(T, FeatureVector(D, 0.0f));
 
         double denominator = 0.0;
         for (int n = 1; n <= N; ++n)
@@ -45,12 +45,12 @@ namespace libmfcc::features
         return deltas;
     }
 
-    MfccMatrix computeDeltaDelta(const MfccMatrix& mfcc, int N)
+    FeatureMatrix computeDeltaDelta(const FeatureMatrix& mfcc, int N)
     {
         return computeDelta(computeDelta(mfcc, N), N);
     }
 
-    MfccMatrix appendDeltas(const MfccMatrix& base, bool useDelta, bool useDeltaDelta, int N)
+    FeatureMatrix appendDeltas(const FeatureMatrix& base, bool useDelta, bool useDeltaDelta, int N)
     {
         if (base.empty())
             return base;
@@ -58,10 +58,10 @@ namespace libmfcc::features
         if (!useDelta && !useDeltaDelta)
             return base;
 
-        const auto delta = useDelta ? computeDelta(base, N) : MfccMatrix{};
-        const auto deltaDelta = useDeltaDelta ? computeDeltaDelta(base, N) : MfccMatrix{};
+        const auto delta = useDelta ? computeDelta(base, N) : FeatureMatrix{};
+        const auto deltaDelta = useDeltaDelta ? computeDeltaDelta(base, N) : FeatureMatrix{};
 
-        MfccMatrix out = base;
+        FeatureMatrix out = base;
         for (std::size_t t = 0; t < out.size(); ++t)
         {
             if (useDelta)

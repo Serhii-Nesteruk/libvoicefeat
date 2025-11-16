@@ -1,14 +1,14 @@
 #pragma once
 
-#include "libmfcc/config.h"
-#include "libmfcc/dsp/frame.h"
-#include "libmfcc/dsp/transformer.h"
+#include "libvoicefeat/config.h"
+#include "libvoicefeat/dsp/frame.h"
+#include "libvoicefeat/dsp/transformer.h"
 
 #include <vector>
 
-namespace libmfcc::features
+namespace libvoicefeat::features
 {
-    struct MfccOptions
+    struct FeatureOptions
     {
         int sampleRate = 16000;
         int numFilters = 26;
@@ -22,7 +22,7 @@ namespace libmfcc::features
     [[nodiscard]] double hzToMel(double hz, MelScale scale);
     [[nodiscard]] double melToHz(double mel, MelScale scale);
 
-    [[nodiscard]] MfccMatrix computeMFCC(const std::vector<libmfcc::dsp::Frame>& frames,
-                       const libmfcc::dsp::ITransformer& transformer,
-                       const MfccOptions& options);
+    [[nodiscard]] FeatureMatrix computeMFCC(const std::vector<libvoicefeat::dsp::Frame>& frames,
+                       const libvoicefeat::dsp::ITransformer& transformer,
+                       const FeatureOptions& options);
 }

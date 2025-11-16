@@ -3,7 +3,7 @@
 #include <vector>
 #include <complex>
 
-namespace libmfcc::dsp {
+namespace libvoicefeat::dsp {
 
     class ITransformer {
     public:

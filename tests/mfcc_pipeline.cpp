@@ -1,4 +1,4 @@
-#include "libmfcc/libmfcc.h"
+#include "libvoicefeat/libvoicefeat.h"
 
 #include <cmath>
 #include <iostream>
@@ -9,7 +9,7 @@ namespace {
 
 int main()
 {
-    libmfcc::audio::AudioBuffer buffer;
+    libvoicefeat::audio::AudioBuffer buffer;
     buffer.sampleRate = 16000;
 
     const int totalSamples = 3200;
@@ -20,11 +20,11 @@ int main()
         buffer.samples[n] = std::sin(2.0f * kPi * freq * static_cast<float>(n) / buffer.sampleRate);
     }
 
-    libmfcc::MfccConfig config;
+    libvoicefeat::CepstralConfig config;
     config.useDeltas = true;
     config.useDeltaDeltas = true;
 
-    auto mfcc = libmfcc::compute_buffer_mfcc(buffer, config);
+    auto mfcc = libvoicefeat::compute_buffer_mfcc(buffer, config);
     if (mfcc.empty())
     {
         std::cerr << "MFCC matrix is empty" << std::endl;

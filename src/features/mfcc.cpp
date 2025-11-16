@@ -1,6 +1,6 @@
-#include "libmfcc/features/mfcc.h"
+#include "libvoicefeat/features/mfcc.h"
 
-#include "libmfcc/config.h"
+#include "libvoicefeat/config.h"
 
 #include <algorithm>
 #include <cmath>
@@ -13,7 +13,7 @@ namespace
     constexpr double kLogEps = 1e-10;
     constexpr double kPi = 3.14159265358979323846;
 
-    using libmfcc::MelScale;
+    using libvoicefeat::MelScale;
 
     inline double hz_to_mel_htk(double hz)
     {
@@ -63,8 +63,8 @@ namespace
     {
         const int nFreqs = nFft / 2 + 1;
         std::vector<std::vector<double>> filters(nMels, std::vector<double>(nFreqs, 0.0));
-        const double melMin = libmfcc::features::hzToMel(minFreq, scale);
-        const double melMax = libmfcc::features::hzToMel(maxFreq, scale);
+        const double melMin = libvoicefeat::features::hzToMel(minFreq, scale);
+        const double melMax = libvoicefeat::features::hzToMel(maxFreq, scale);
 
         std::vector<double> melPoints(nMels + 2);
         for (int i = 0; i < nMels + 2; ++i)
@@ -75,7 +75,7 @@ namespace
         std::vector<double> hzPoints(nMels + 2);
         for (int i = 0; i < nMels + 2; ++i)
         {
-            hzPoints[i] = libmfcc::features::melToHz(melPoints[i], scale);
+            hzPoints[i] = libvoicefeat::features::melToHz(melPoints[i], scale);
         }
 
         std::vector<int> bins(nMels + 2);
@@ -156,7 +156,7 @@ namespace
     }
 }
 
-namespace libmfcc::features
+namespace libvoicefeat::features
 {
     double hzToMel(double hz, MelScale scale)
     {
@@ -182,11 +182,11 @@ namespace libmfcc::features
         }
     }
 
-    MfccMatrix computeMFCC(const std::vector<libmfcc::dsp::Frame>& frames,
-                           const libmfcc::dsp::ITransformer& transformer,
-                           const MfccOptions& options)
+    FeatureMatrix computeMFCC(const std::vector<libvoicefeat::dsp::Frame>& frames,
+                           const libvoicefeat::dsp::ITransformer& transformer,
+                           const FeatureOptions& options)
     {
-        MfccMatrix all;
+        FeatureMatrix all;
         if (frames.empty())
             return all;
 
@@ -194,7 +194,7 @@ namespace libmfcc::features
         const int nFft = static_cast<int>(firstSpectrum.size());
         const int nFreqs = nFft / 2 + 1;
 
-        MfccOptions opts = options;
+        FeatureOptions opts = options;
         opts.numCoeffs = std::max(1, opts.numCoeffs);
         opts.numFilters = std::max(1, opts.numFilters);
         opts.sampleRate = std::max(1, opts.sampleRate);
@@ -209,7 +209,7 @@ namespace libmfcc::features
 
         all.reserve(frames.size());
 
-        const auto process = [&](const libmfcc::dsp::Frame& frame,
+        const auto process = [&](const libvoicefeat::dsp::Frame& frame,
             const std::vector<std::complex<float>>& spec)
         {
             auto mag = magnitude(spec, nFreqs);
@@ -223,7 +223,7 @@ namespace libmfcc::features
             }
 
             auto coeffsDouble = dctII(mel, opts.numCoeffs);
-            MfccVector coeffs(coeffsDouble.size(), 0.0f);
+            FeatureVector coeffs(coeffsDouble.size(), 0.0f);
             for (std::size_t i = 0; i < coeffsDouble.size(); ++i)
             {
                 coeffs[i] = static_cast<float>(coeffsDouble[i]);

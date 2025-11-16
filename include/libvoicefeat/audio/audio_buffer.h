@@ -2,7 +2,7 @@
 
 #include <vector>
 
-namespace libmfcc::audio
+namespace libvoicefeat::audio
 {
     struct AudioBuffer
     {
