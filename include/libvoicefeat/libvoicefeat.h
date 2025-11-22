@@ -9,12 +9,12 @@
 
 namespace libvoicefeat {
 
-    [[nodiscard]] FeatureMatrix compute_file_mfcc(
+    [[nodiscard]] FeatureMatrix computeFileMfcc(
         const std::filesystem::path& path,
         const CepstralConfig& config = {}
     );
 
-    [[nodiscard]] FeatureMatrix compute_buffer_mfcc(
+    [[nodiscard]] FeatureMatrix computeBufferMfcc(
         const audio::AudioBuffer& audio,
         const CepstralConfig& config = {}
     );

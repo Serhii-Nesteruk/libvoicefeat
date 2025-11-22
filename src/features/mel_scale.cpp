@@ -6,42 +6,42 @@ namespace
 {
     constexpr double kLogBase = 6.4;
 
-    double hz_to_mel_htk(double hz)
+    double hzToMelHtk(double hz)
     {
         return 2595.0 * std::log10(1.0 + hz / 700.0);
     }
 
-    double mel_to_hz_htk(double mel)
+    double melToHzHtk(double mel)
     {
         return 700.0 * (std::pow(10.0, mel / 2595.0) - 1.0);
     }
 
-    double hz_to_mel_slaney(double hz)
+    double hzToMelSlaney(double hz)
     {
-        const double f_sp = 200.0 / 3.0;
-        const double min_log_hz = 1000.0;
-        const double min_log_mel = min_log_hz / f_sp;
-        const double log_step = std::log(kLogBase) / 27.0;
+        const double fSp = 200.0 / 3.0;
+        const double minLogHz = 1000.0;
+        const double minLogMel = minLogHz / fSp;
+        const double logStep = std::log(kLogBase) / 27.0;
 
-        double mel = hz / f_sp;
-        if (hz >= min_log_hz)
+        double mel = hz / fSp;
+        if (hz >= minLogHz)
         {
-            mel = min_log_mel + std::log(hz / min_log_hz) / log_step;
+            mel = minLogMel + std::log(hz / minLogHz) / logStep;
         }
         return mel;
     }
 
-    double mel_to_hz_slaney(double mel)
+    double melToHzSlaney(double mel)
     {
-        const double f_sp = 200.0 / 3.0;
-        const double min_log_hz = 1000.0;
-        const double min_log_mel = min_log_hz / f_sp;
-        const double log_step = std::log(kLogBase) / 27.0;
+        const double fSp = 200.0 / 3.0;
+        const double minLogHz = 1000.0;
+        const double minLogMel = minLogHz / fSp;
+        const double logStep = std::log(kLogBase) / 27.0;
 
-        double hz = mel * f_sp;
-        if (mel >= min_log_mel)
+        double hz = mel * fSp;
+        if (mel >= minLogMel)
         {
-            hz = min_log_hz * std::exp(log_step * (mel - min_log_mel));
+            hz = minLogHz * std::exp(logStep * (mel - minLogMel));
         }
         return hz;
     }
@@ -54,10 +54,10 @@ namespace libvoicefeat::features
         switch (scale)
         {
         case MelScale::HTK:
-            return hz_to_mel_htk(hz);
+            return hzToMelHtk(hz);
         case MelScale::Slaney:
         default:
-            return hz_to_mel_slaney(hz);
+            return hzToMelSlaney(hz);
         }
     }
 
@@ -66,10 +66,10 @@ namespace libvoicefeat::features
         switch (scale)
         {
         case MelScale::HTK:
-            return mel_to_hz_htk(mel);
+            return melToHzHtk(mel);
         case MelScale::Slaney:
         default:
-            return mel_to_hz_slaney(mel);
+            return melToHzSlaney(mel);
         }
     }
 }

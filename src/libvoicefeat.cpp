@@ -21,7 +21,7 @@ namespace
     using namespace libvoicefeat;
     using namespace libvoicefeat::utils;
 
-    libvoicefeat::audio::AudioBuffer load_audio(const std::filesystem::path& path)
+    libvoicefeat::audio::AudioBuffer loadAudio(const std::filesystem::path& path)
     {
         const auto extStr = path.extension().string();
         std::string ext;
@@ -45,7 +45,7 @@ namespace
         throw std::invalid_argument("Unsupported audio format: " + path.string());
     }
 
-    void apply_pre_emphasis(std::vector<float>& samples, float coeff)
+    void applyPreEmphasis(std::vector<float>& samples, float coeff)
     {
         if (samples.empty())
         {
@@ -61,7 +61,7 @@ namespace
         samples.swap(emphasized);
     }
 
-    FeatureOptions build_options(int sampleRate, const CepstralConfig& config)
+    FeatureOptions buildOptions(int sampleRate, const CepstralConfig& config)
     {
         FeatureOptions opts;
         opts.sampleRate = sampleRate;
@@ -78,13 +78,13 @@ namespace
 
 namespace libvoicefeat
 {
-    FeatureMatrix compute_file_mfcc(const std::filesystem::path& path, const CepstralConfig& config)
+    FeatureMatrix computeFileMfcc(const std::filesystem::path& path, const CepstralConfig& config)
     {
-        auto audio = load_audio(path);
-        return compute_buffer_mfcc(audio, config);
+        auto audio = loadAudio(path);
+        return computeBufferMfcc(audio, config);
     }
 
-    FeatureMatrix compute_buffer_mfcc(const audio::AudioBuffer& audio, const CepstralConfig& config)
+    FeatureMatrix computeBufferMfcc(const audio::AudioBuffer& audio, const CepstralConfig& config)
     {
         if (config.frameSize <= 0 || config.frameStep <= 0)
             throw std::invalid_argument("Frame size and step must be positive");
@@ -97,7 +97,7 @@ namespace libvoicefeat
         working.sampleRate = sampleRate;
 
         if (config.usePreEmphasis)
-            apply_pre_emphasis(working.samples, config.preEmphasisCoeff);
+            applyPreEmphasis(working.samples, config.preEmphasisCoeff);
 
         dsp::FixedFrameExtractor extractor(config.frameSize, config.frameStep);
         auto frames = extractor.extract(working);
@@ -109,7 +109,7 @@ namespace libvoicefeat
             window.apply(frame.data);
 
         dsp::FFTTransformer transformer;
-        const auto options = build_options(sampleRate, config);
+        const auto options = buildOptions(sampleRate, config);
         auto base = features::computeMFCC(frames, transformer, options);
         return features::appendDeltas(base, config.useDeltas, config.useDeltaDeltas);
     }
