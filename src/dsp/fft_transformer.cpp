@@ -1,6 +1,8 @@
 #include "libvoicefeat/dsp/fft_transformer.h"
 #include <cmath>
 
+#include "libvoicefeat/utils/constants.h"
+
 namespace libvoicefeat::dsp {
 
 void FFTTransformer::fft(std::vector<std::complex<float>>& data) const {
@@ -18,7 +20,7 @@ void FFTTransformer::fft(std::vector<std::complex<float>>& data) const {
     fft(odd);
 
     for (size_t k = 0; k < N / 2; ++k) {
-        std::complex<float> t = std::polar(1.f, -2.f * static_cast<float>(M_PI) * k / N) * odd[k];
+        std::complex<float> t = std::polar(1.f, -2.f * static_cast<float>(constants::PI) * k / N) * odd[k];
         data[k] = even[k] + t;
         data[k + N / 2] = even[k] - t;
     }

@@ -34,7 +34,6 @@ set(libvoicefeat_SOURCES
 
         # Facade
         ${SRC_DIR}/libvoicefeat.cpp
-        src/features/filterbanks/bark_filterbank.cpp
 )
 
 add_library(libvoicefeat ${libvoicefeat_SOURCES})
