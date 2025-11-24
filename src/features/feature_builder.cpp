@@ -70,12 +70,6 @@ FeatureBuilder FeatureBuilder::setCompressionType(const CompressionType& compres
     return *this;
 }
 
-FeatureBuilder FeatureBuilder::setPreEmphasisOptions(const PreEmphasisOptions& preEmphasisOptions)
-{
-    _feature.setPreEmphasisOptions(preEmphasisOptions);
-    return *this;
-}
-
 Feature FeatureBuilder::build() const
 {
     return _feature;
@@ -93,7 +87,6 @@ Feature FeatureDirector::createDefaultMfccFeature(const CepstralConfig& cfg)
             .setMinFreq(constants::DEFAULT_MFCC_MIN_FREQ)
             .setMaxFreq(cfg.feature.maxFreq)
             .setCompressionType(CompressionType::Log)
-            .setPreEmphasisOptions(cfg.preemphasis)
             .setIncludeEnergy(cfg.feature.includeEnergy)
             .build();
 }
@@ -109,7 +102,6 @@ Feature FeatureDirector::createDefaultGfccFeature(const CepstralConfig& cfg)
             .setMinFreq(constants::DEFAULT_GFCC_MIN_FREQ)
             .setMaxFreq(cfg.feature.maxFreq)
             .setCompressionType(CompressionType::Log)
-            .setPreEmphasisOptions(cfg.preemphasis)
             .setIncludeEnergy(cfg.feature.includeEnergy)
             .build();
 }
@@ -125,7 +117,6 @@ Feature FeatureDirector::createDefaultLfccFeature(const CepstralConfig& cfg)
             .setMinFreq(constants::DEFAULT_LFCC_MIN_FREQ)
             .setMaxFreq(cfg.feature.maxFreq)
             .setCompressionType(CompressionType::Log)
-            .setPreEmphasisOptions(cfg.preemphasis)
             .setIncludeEnergy(cfg.feature.includeEnergy)
             .build();
 }
@@ -142,7 +133,6 @@ Feature FeatureDirector::createDefaultPnccFeature(const CepstralConfig& cfg)
             .setMinFreq(constants::DEFAULT_PNCC_MIN_FREQ)
             .setMaxFreq(cfg.feature.maxFreq)
             .setCompressionType(CompressionType::PowerNormalized)
-            .setPreEmphasisOptions(cfg.preemphasis)
             .setIncludeEnergy(cfg.feature.includeEnergy)
             .build();
 }
@@ -158,7 +148,6 @@ Feature FeatureDirector::createDefaultPlpFeature(const CepstralConfig& cfg)
             .setMinFreq(constants::DEFAULT_PLP_MIN_FREQ)
             .setMaxFreq(cfg.feature.maxFreq)
             .setCompressionType(CompressionType::CubeRoot)
-            .setPreEmphasisOptions(cfg.preemphasis)
             .setIncludeEnergy(cfg.feature.includeEnergy)
             .build();
 }

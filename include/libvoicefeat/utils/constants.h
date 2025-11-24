@@ -3,7 +3,8 @@
 
 namespace libvoicefeat::constants
 {
-    constexpr float PI = 3.14159265358979323846f;
+    constexpr double PI = 3.14159265358979323846f;
+    constexpr double K_LOG_EPS = 1e-10;
 
     constexpr int DEFAULT_MFCC_FILTERS_NUM = 26;
     constexpr int DEFAULT_GFCC_FILTERS_NUM = 32;

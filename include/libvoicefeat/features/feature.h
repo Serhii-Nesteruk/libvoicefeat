@@ -18,7 +18,7 @@ namespace libvoicefeat::features
 
         [[nodiscard]] inline FeatureOptions getOptions() const { return _options; }
         [[nodiscard]] inline CepstralType getCepstralType() const { return _cepstralType; }
-        [[nodiscard]] inline FeatureMatrix getComputedMatrix() const { return _computed; }
+        [[nodiscard]] inline const FeatureMatrix& getComputedMatrix() const { return _computed; }
 
         void setOptions(const FeatureOptions& options);
         void setSampleRate(int sampleRate);
@@ -43,7 +43,8 @@ namespace libvoicefeat::features
         void applyCompression(std::vector<double>& v, libvoicefeat::CompressionType type);
 
         void processFrame(const Frame& frame,
-                          const std::vector<std::complex<float>>& spec, const int nFreqs);
+                          const std::vector<std::complex<float>>& spec, const std::vector<std::vector<double>>& filters,
+                          const int nFreqs);
         void log(std::vector<double>& v);
         void cubeRoot(std::vector<double>& v);
         void powerNormalized(std::vector<double>& v);
@@ -51,7 +52,7 @@ namespace libvoicefeat::features
         void meanPowerNormalization(std::vector<double>& v);
         void asymmetricNonlinear(std::vector<double>& v);
         void spectralFloor(std::vector<double>& v);
-        void dctII(const std::vector<double>& v, int numCoeffs);
+        [[nodiscard]] std::vector<double> dctII(const std::vector<double>& v, int numCoeffs);
         // TODO: Real LPV/PLP implementation
         std::vector<double> plpCepstraPlaceholder(const std::vector<double>& barkEnergies,
                                                   int numCoeffs);

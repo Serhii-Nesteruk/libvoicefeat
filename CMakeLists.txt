@@ -9,31 +9,8 @@ set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
 set(INC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 set(THIRD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/third_party)
 
-set(libvoicefeat_SOURCES
-        # Audio
-        ${SRC_DIR}/audio/wav_audio_reader.cpp
-        ${SRC_DIR}/audio/mp3_audio_reader.cpp
-        ${SRC_DIR}/minimp3_single.cpp
-
-        # DSP
-        ${SRC_DIR}/dsp/frame_exctractor.cpp
-        ${SRC_DIR}/dsp/window_function.cpp
-        ${SRC_DIR}/dsp/fft_transformer.cpp
-        ${SRC_DIR}/dsp/dft_transformer.cpp
-
-        # Features
-        ${SRC_DIR}/features/mel_scale.cpp
-        ${SRC_DIR}/features/filterbanks/bark_filterbank.cpp
-        ${SRC_DIR}/features/filterbanks/filterbank_factory.cpp
-        ${SRC_DIR}/features/filterbanks/filterbank_utils.cpp
-        ${SRC_DIR}/features/filterbanks/gammatone_filterbank.cpp
-        ${SRC_DIR}/features/filterbanks/linear_filterbank.cpp
-        ${SRC_DIR}/features/filterbanks/mel_filterbank.cpp
-        ${SRC_DIR}/features/mfcc.cpp
-        ${SRC_DIR}/features/delta.cpp
-
-        # Facade
-        ${SRC_DIR}/libvoicefeat.cpp
+file(GLOB_RECURSE libvoicefeat_SOURCES
+        ${SRC_DIR}/*.cpp
 )
 
 add_library(libvoicefeat ${libvoicefeat_SOURCES})

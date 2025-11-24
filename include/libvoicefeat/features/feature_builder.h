@@ -21,7 +21,6 @@ namespace libvoicefeat::features
         [[nodiscard]] FeatureBuilder setMelScale(const MelScale& melScale);
         [[nodiscard]] FeatureBuilder setCepstralType(const CepstralType& cepstralType);
         [[nodiscard]] FeatureBuilder setCompressionType(const CompressionType& compressionType);
-        [[nodiscard]] FeatureBuilder setPreEmphasisOptions(const PreEmphasisOptions& preEmphasisOptions);
 
         [[nodiscard]] Feature build() const;
 

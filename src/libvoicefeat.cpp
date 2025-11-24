@@ -14,6 +14,7 @@
 #include <string>
 #include <vector>
 
+#include "libvoicefeat/features/feature_builder.h"
 #include "libvoicefeat/utils/path.h"
 
 namespace
@@ -111,7 +112,9 @@ namespace libvoicefeat
 
         dsp::FFTTransformer transformer;
         const auto options = buildOptions(sampleRate, config);
-        auto base = features::computeMFCC(frames, transformer, options);
+        auto mfccFeature = features::FeatureDirector::createDefaultMfccFeature(config);
+        const auto base = mfccFeature.compute(frames, transformer);
+        // auto base = features::computeMFCC(frames, transformer, options);
         return features::appendDeltas(base, config.delta.useDeltas, config.delta.useDeltaDeltas);
     }
 }

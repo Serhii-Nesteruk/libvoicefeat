@@ -2,6 +2,8 @@
 
 #include <algorithm>
 
+#include "libvoicefeat/utils/constants.h"
+
 using namespace libvoicefeat::features;
 using namespace libvoicefeat::dsp;
 
@@ -27,12 +29,12 @@ libvoicefeat::FeatureMatrix Feature::compute(const std::vector<Frame>& frames,
     const auto fbank = createFilterbank(_options.filterbank, _options.melScale);
     const auto filters = fbank->build(_fbParams);
 
-    processFrame(frames.front(), firstSpectrum, nFreqs);
+    processFrame(frames.front(), firstSpectrum, filters, nFreqs);
 
     for (std::size_t i = 0; i < frames.size(); ++i)
     {
         auto spec = transformer.transform(frames[i].data);
-        processFrame(frames[i], spec, nFreqs);
+        processFrame(frames[i], spec, filters, nFreqs);
     }
 
     return _computed;
@@ -160,7 +162,8 @@ void Feature::applyCompression(std::vector<double>& v, libvoicefeat::Compression
 }
 
 void Feature::processFrame(const Frame& frame,
-                            const std::vector<std::complex<float>>& spec, const int nFreqs)
+                           const std::vector<std::complex<float>>& spec,
+                           const std::vector<std::vector<double>>& filters, const int nFreqs)
 {
     auto mag = magnitude(spec, nFreqs);
     if (static_cast<int>(mag.size()) < nFreqs)
@@ -202,7 +205,7 @@ void Feature::processFrame(const Frame& frame,
             const double v = s;
             energy += v * v;
         }
-        const double logEnergy = std::log(energy + kLogEps);
+        const double logEnergy = std::log(energy + constants::K_LOG_EPS);
         coeffs[0] = static_cast<float>(logEnergy);
     }
 
@@ -212,7 +215,7 @@ void Feature::processFrame(const Frame& frame,
 void Feature::log(std::vector<double>& v)
 {
     for (auto& x : v)
-        x = std::log(x + kLogEps);
+        x = std::log(x + constants::K_LOG_EPS);
 }
 
 void Feature::cubeRoot(std::vector<double>& v)
@@ -238,8 +241,8 @@ void Feature::meanPowerNormalization(std::vector<double>& v)
         meanPower += x;
 
     meanPower /= std::max<size_t>(1, v.size());
-    if (meanPower < kLogEps)
-        meanPower = kLogEps;
+    if (meanPower < constants::K_LOG_EPS)
+        meanPower = constants::K_LOG_EPS;
 
     for (auto& x : v)
         x = x / meanPower;
@@ -268,7 +271,7 @@ void Feature::spectralFloor(std::vector<double>& v)
     }
 }
 
-void Feature::dctII(const std::vector<double>& v, int numCoeffs)
+std::vector<double> Feature::dctII(const std::vector<double>& v, int numCoeffs)
 {
     const int N = static_cast<int>(v.size());
     const int K = std::max(1, std::min(numCoeffs, N));
@@ -278,18 +281,20 @@ void Feature::dctII(const std::vector<double>& v, int numCoeffs)
         double sum = 0.0;
         for (int n = 0; n < N; ++n)
         {
-            const double angle = kPi * k * (2.0 * n + 1.0) / (2.0 * N);
+            const double angle = constants::PI * k * (2.0 * n + 1.0) / (2.0 * N);
             sum += v[n] * std::cos(angle);
         }
         out[k] = sum;
     }
     return out;
 }
+
 std::vector<double> Feature::plpCepstraPlaceholder(const std::vector<double>& barkEnergies, int numCoeffs)
 {
     // TODO: IMPLEMENT REAL PLP
     return dctII(barkEnergies, numCoeffs);
 }
+
 void Feature::applyPreEmphasis(std::vector<float>& samples, float coeff)
 {
     if (samples.empty())
