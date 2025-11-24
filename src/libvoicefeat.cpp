@@ -65,13 +65,14 @@ namespace
     {
         FeatureOptions opts;
         opts.sampleRate = sampleRate;
-        opts.numCoeffs = config.numCoeffs;
-        opts.numFilters = config.numFilters;
-        opts.minFreq = config.minFreq;
-        opts.maxFreq = config.maxFreq > 0.0f ? config.maxFreq : static_cast<float>(sampleRate) / 2.0f;
-        opts.includeEnergy = config.includeEnergy;
-        opts.filterbank = config.filterbank;
-        opts.melScale = config.melScale;
+        opts.numCoeffs = config.feature.numCoeffs;
+        opts.numFilters = config.feature.numFilters;
+        opts.minFreq = config.feature.minFreq;
+        opts.maxFreq = config.feature.maxFreq > 0.0f ? config.feature.maxFreq : static_cast<float>(sampleRate) / 2.0f;
+        opts.includeEnergy = config.feature.includeEnergy;
+        opts.filterbank = config.feature.filterbank;
+        opts.melScale = config.feature.melScale;
+        opts.compressionType = config.feature.compressionType;
         return opts;
     }
 }
@@ -86,31 +87,31 @@ namespace libvoicefeat
 
     FeatureMatrix computeBufferMfcc(const audio::AudioBuffer& audio, const CepstralConfig& config)
     {
-        if (config.frameSize <= 0 || config.frameStep <= 0)
+        if (config.framing.frameSize <= 0 || config.framing.frameStep <= 0)
             throw std::invalid_argument("Frame size and step must be positive");
 
-        int sampleRate = audio.sampleRate > 0 ? audio.sampleRate : config.sampleRate;
+        int sampleRate = audio.sampleRate > 0 ? audio.sampleRate : config.feature.sampleRate;
         if (sampleRate <= 0)
             throw std::invalid_argument("Sample rate must be positive");
 
         audio::AudioBuffer working = audio;
         working.sampleRate = sampleRate;
 
-        if (config.usePreEmphasis)
-            applyPreEmphasis(working.samples, config.preEmphasisCoeff);
+        if (config.preemphasis.usePreEmphasis)
+            applyPreEmphasis(working.samples, config.preemphasis.preEmphasisCoeff);
 
-        dsp::FixedFrameExtractor extractor(config.frameSize, config.frameStep);
+        dsp::FixedFrameExtractor extractor(config.framing.frameSize, config.framing.frameStep);
         auto frames = extractor.extract(working);
         if (frames.empty())
             return {};
 
-        dsp::HanningWindow window(config.frameSize);
+        dsp::HanningWindow window(config.framing.frameSize);
         for (auto& frame : frames)
             window.apply(frame.data);
 
         dsp::FFTTransformer transformer;
         const auto options = buildOptions(sampleRate, config);
         auto base = features::computeMFCC(frames, transformer, options);
-        return features::appendDeltas(base, config.useDeltas, config.useDeltaDeltas);
+        return features::appendDeltas(base, config.delta.useDeltas, config.delta.useDeltaDeltas);
     }
 }

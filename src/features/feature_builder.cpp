@@ -46,21 +46,33 @@ FeatureBuilder FeatureBuilder::setIncludeEnergy(bool includeEnergy)
     return *this;
 }
 
-FeatureBuilder FeatureBuilder::setFBankType(FilterbankType fBankType)
+FeatureBuilder FeatureBuilder::setFBankType(const FilterbankType& fBankType)
 {
     _feature.setFBankType(fBankType);
     return *this;
 }
 
-FeatureBuilder FeatureBuilder::setMelScale(MelScale melScale)
+FeatureBuilder FeatureBuilder::setMelScale(const MelScale& melScale)
 {
     _feature.setMelScale(melScale);
     return *this;
 }
 
-FeatureBuilder FeatureBuilder::setCepstralType(CepstralType cepstralType)
+FeatureBuilder FeatureBuilder::setCepstralType(const CepstralType& cepstralType)
 {
     _feature.setCepstralType(cepstralType);
+    return *this;
+}
+
+FeatureBuilder FeatureBuilder::setCompressionType(const CompressionType& compressionType)
+{
+    _feature.setCompressionType(compressionType);
+    return *this;
+}
+
+FeatureBuilder FeatureBuilder::setPreEmphasisOptions(const PreEmphasisOptions& preEmphasisOptions)
+{
+    _feature.setPreEmphasisOptions(preEmphasisOptions);
     return *this;
 }
 
@@ -72,73 +84,83 @@ Feature FeatureBuilder::build() const
 Feature FeatureDirector::createDefaultMfccFeature(const CepstralConfig& cfg)
 {
     return FeatureBuilder{}
-           .setCepstralType(CepstralType::MFCC)
-           .setFBankType(FilterbankType::Mel)
-           .setMelScale(MelScale::Slaney)
-           .setSampleRate(cfg.feature.sampleRate)
-           .setNumFilters(constants::DEFAULT_MFCC_FILTERS_NUM)
-           .setNumCoeffs(constants::DEFAULT_MFCC_COEFFS_NUM)
-           .setMinFreq(constants::DEFAULT_MFCC_MIN_FREQ)
-           .setMaxFreq(cfg.feature.maxFreq)
-           .setIncludeEnergy(cfg.feature.includeEnergy)
-           .build();
+            .setCepstralType(CepstralType::MFCC)
+            .setFBankType(FilterbankType::Mel)
+            .setMelScale(MelScale::Slaney)
+            .setSampleRate(cfg.feature.sampleRate)
+            .setNumFilters(constants::DEFAULT_MFCC_FILTERS_NUM)
+            .setNumCoeffs(constants::DEFAULT_MFCC_COEFFS_NUM)
+            .setMinFreq(constants::DEFAULT_MFCC_MIN_FREQ)
+            .setMaxFreq(cfg.feature.maxFreq)
+            .setCompressionType(CompressionType::Log)
+            .setPreEmphasisOptions(cfg.preemphasis)
+            .setIncludeEnergy(cfg.feature.includeEnergy)
+            .build();
 }
 
 Feature FeatureDirector::createDefaultGfccFeature(const CepstralConfig& cfg)
 {
     return FeatureBuilder{}
-           .setCepstralType(CepstralType::GFCC)
-           .setFBankType(FilterbankType::Gammatone)
-           .setSampleRate(cfg.feature.sampleRate)
-           .setNumFilters(constants::DEFAULT_GFCC_FILTERS_NUM)
-           .setNumCoeffs(constants::DEFAULT_GFCC_COEFFS_NUM)
-           .setMinFreq(constants::DEFAULT_GFCC_MIN_FREQ)
-           .setMaxFreq(cfg.feature.maxFreq)
-           .setIncludeEnergy(cfg.feature.includeEnergy)
-           .build();
+            .setCepstralType(CepstralType::GFCC)
+            .setFBankType(FilterbankType::Gammatone)
+            .setSampleRate(cfg.feature.sampleRate)
+            .setNumFilters(constants::DEFAULT_GFCC_FILTERS_NUM)
+            .setNumCoeffs(constants::DEFAULT_GFCC_COEFFS_NUM)
+            .setMinFreq(constants::DEFAULT_GFCC_MIN_FREQ)
+            .setMaxFreq(cfg.feature.maxFreq)
+            .setCompressionType(CompressionType::Log)
+            .setPreEmphasisOptions(cfg.preemphasis)
+            .setIncludeEnergy(cfg.feature.includeEnergy)
+            .build();
 }
 
 Feature FeatureDirector::createDefaultLfccFeature(const CepstralConfig& cfg)
 {
     return FeatureBuilder{}
-           .setCepstralType(CepstralType::LFCC)
-           .setFBankType(FilterbankType::Linear)
-           .setSampleRate(cfg.feature.sampleRate)
-           .setNumFilters(constants::DEFAULT_LFCC_FILTERS_NUM)
-           .setNumCoeffs(constants::DEFAULT_LFCC_COEFFS_NUM)
-           .setMinFreq(constants::DEFAULT_LFCC_MIN_FREQ)
-           .setMaxFreq(cfg.feature.maxFreq)
-           .setIncludeEnergy(cfg.feature.includeEnergy)
-           .build();
+            .setCepstralType(CepstralType::LFCC)
+            .setFBankType(FilterbankType::Linear)
+            .setSampleRate(cfg.feature.sampleRate)
+            .setNumFilters(constants::DEFAULT_LFCC_FILTERS_NUM)
+            .setNumCoeffs(constants::DEFAULT_LFCC_COEFFS_NUM)
+            .setMinFreq(constants::DEFAULT_LFCC_MIN_FREQ)
+            .setMaxFreq(cfg.feature.maxFreq)
+            .setCompressionType(CompressionType::Log)
+            .setPreEmphasisOptions(cfg.preemphasis)
+            .setIncludeEnergy(cfg.feature.includeEnergy)
+            .build();
 }
 
 Feature FeatureDirector::createDefaultPnccFeature(const CepstralConfig& cfg)
 {
     return FeatureBuilder{}
-           .setCepstralType(CepstralType::PNCC)
-           .setFBankType(FilterbankType::Mel)
-           .setMelScale(MelScale::Slaney)
-           .setSampleRate(cfg.feature.sampleRate)
-           .setNumFilters(constants::DEFAULT_PNCC_FILTERS_NUM)
-           .setNumCoeffs(constants::DEFAULT_PNCC_COEFFS_NUM)
-           .setMinFreq(constants::DEFAULT_PNCC_MIN_FREQ)
-           .setMaxFreq(cfg.feature.maxFreq)
-           .setIncludeEnergy(cfg.feature.includeEnergy)
-           .build();
+            .setCepstralType(CepstralType::PNCC)
+            .setFBankType(FilterbankType::Mel)
+            .setMelScale(MelScale::Slaney)
+            .setSampleRate(cfg.feature.sampleRate)
+            .setNumFilters(constants::DEFAULT_PNCC_FILTERS_NUM)
+            .setNumCoeffs(constants::DEFAULT_PNCC_COEFFS_NUM)
+            .setMinFreq(constants::DEFAULT_PNCC_MIN_FREQ)
+            .setMaxFreq(cfg.feature.maxFreq)
+            .setCompressionType(CompressionType::PowerNormalized)
+            .setPreEmphasisOptions(cfg.preemphasis)
+            .setIncludeEnergy(cfg.feature.includeEnergy)
+            .build();
 }
 
 Feature FeatureDirector::createDefaultPlpFeature(const CepstralConfig& cfg)
 {
     return FeatureBuilder{}
-           .setCepstralType(CepstralType::PLP)
-           .setFBankType(FilterbankType::Bark)
-           .setSampleRate(cfg.feature.sampleRate)
-           .setNumFilters(constants::DEFAULT_PLP_FILTERS_NUM)
-           .setNumCoeffs(constants::DEFAULT_PLP_COEFFS_NUM)
-           .setMinFreq(constants::DEFAULT_PLP_MIN_FREQ)
-           .setMaxFreq(cfg.feature.maxFreq)
-           .setIncludeEnergy(cfg.feature.includeEnergy)
-           .build();
+            .setCepstralType(CepstralType::PLP)
+            .setFBankType(FilterbankType::Bark)
+            .setSampleRate(cfg.feature.sampleRate)
+            .setNumFilters(constants::DEFAULT_PLP_FILTERS_NUM)
+            .setNumCoeffs(constants::DEFAULT_PLP_COEFFS_NUM)
+            .setMinFreq(constants::DEFAULT_PLP_MIN_FREQ)
+            .setMaxFreq(cfg.feature.maxFreq)
+            .setCompressionType(CompressionType::CubeRoot)
+            .setPreEmphasisOptions(cfg.preemphasis)
+            .setIncludeEnergy(cfg.feature.includeEnergy)
+            .build();
 }
 
 Feature FeatureFactory::createDefaultFeature(const CepstralType& type, const CepstralConfig& cfg)

@@ -8,7 +8,7 @@ namespace libvoicefeat::constants
     constexpr int DEFAULT_MFCC_FILTERS_NUM = 26;
     constexpr int DEFAULT_GFCC_FILTERS_NUM = 32;
     constexpr int DEFAULT_LFCC_FILTERS_NUM = 30;
-    constexpr int DEFAULT_PFCC_FILTERS_NUM = 40;
+    constexpr int DEFAULT_PNCC_FILTERS_NUM = 40;
     constexpr int DEFAULT_PLP_FILTERS_NUM  = 20;
 
     constexpr int DEFAULT_MFCC_COEFFS_NUM = 13;

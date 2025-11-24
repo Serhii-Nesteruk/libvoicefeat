@@ -10,16 +10,18 @@ namespace libvoicefeat::features
         FeatureBuilder() = default;
         ~FeatureBuilder() = default;
 
-        FeatureBuilder setOptions(const FeatureOptions& options);
-        FeatureBuilder setSampleRate(int sampleRate);
-        FeatureBuilder setNumFilters(int numFilters);
-        FeatureBuilder setNumCoeffs(int numCoeffs);
-        FeatureBuilder setMinFreq(double minFreq);
-        FeatureBuilder setMaxFreq(double maxFreq);
-        FeatureBuilder setIncludeEnergy(bool includeEnergy);
-        FeatureBuilder setFBankType(FilterbankType fBankType);
-        FeatureBuilder setMelScale(MelScale melScale);
-        FeatureBuilder setCepstralType(CepstralType cepstralType);
+        [[nodiscard]] FeatureBuilder setOptions(const FeatureOptions& options);
+        [[nodiscard]] FeatureBuilder setSampleRate(int sampleRate);
+        [[nodiscard]] FeatureBuilder setNumFilters(int numFilters);
+        [[nodiscard]] FeatureBuilder setNumCoeffs(int numCoeffs);
+        [[nodiscard]] FeatureBuilder setMinFreq(double minFreq);
+        [[nodiscard]] FeatureBuilder setMaxFreq(double maxFreq);
+        [[nodiscard]] FeatureBuilder setIncludeEnergy(bool includeEnergy);
+        [[nodiscard]] FeatureBuilder setFBankType(const FilterbankType& fBankType);
+        [[nodiscard]] FeatureBuilder setMelScale(const MelScale& melScale);
+        [[nodiscard]] FeatureBuilder setCepstralType(const CepstralType& cepstralType);
+        [[nodiscard]] FeatureBuilder setCompressionType(const CompressionType& compressionType);
+        [[nodiscard]] FeatureBuilder setPreEmphasisOptions(const PreEmphasisOptions& preEmphasisOptions);
 
         [[nodiscard]] Feature build() const;
 

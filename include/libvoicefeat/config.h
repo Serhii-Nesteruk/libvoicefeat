@@ -33,6 +33,19 @@ namespace libvoicefeat {
         Slaney
     };
 
+    enum class CompressionType
+    {
+        Log,
+        PowerNormalized,
+        CubeRoot
+    };
+
+    enum class CepstralTransform
+    {
+        DCT,
+        LPC
+    };
+
     // --------------------------
     // SUB-CONFIGS (OPTIONS)
     // --------------------------
@@ -47,6 +60,7 @@ namespace libvoicefeat {
         bool includeEnergy              = true;                   // prepend log-energy as c0
         FilterbankType filterbank       = FilterbankType::Mel;    // filterbank type: Mel / Linear / Gammatone / Bark
         MelScale melScale               = MelScale::Slaney;       // mel frequency scale formula (HTK or Slaney)
+        CompressionType compressionType = CompressionType::Log;
     };
 
     struct FramingOptions {
