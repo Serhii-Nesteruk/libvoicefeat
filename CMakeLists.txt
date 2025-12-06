@@ -16,14 +16,24 @@ file(GLOB_RECURSE libvoicefeat_SOURCES
 add_library(libvoicefeat ${libvoicefeat_SOURCES})
 add_library(libvoicefeat::libvoicefeat ALIAS libvoicefeat)
 
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(SAMPLERATE REQUIRED samplerate)
+
 target_include_directories(libvoicefeat
         PUBLIC
         $<BUILD_INTERFACE:${INC_DIR}>
         $<INSTALL_INTERFACE:include>
         PRIVATE
-        ${THIRD_DIR}/minimp3)
+        ${THIRD_DIR}/minimp3
+        ${SAMPLERATE_INCLUDE_DIRS}
+)
 
 target_compile_features(libvoicefeat PUBLIC cxx_std_17)
+
+target_link_libraries(libvoicefeat
+        PRIVATE
+        ${SAMPLERATE_LIBRARIES}
+)
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(libvoicefeat PRIVATE -Wall -Wextra -pedantic)

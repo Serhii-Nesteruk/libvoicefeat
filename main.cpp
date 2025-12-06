@@ -26,6 +26,7 @@ int main()
     try
     {
         const std::filesystem::path audioPath{"./data/common_voice_en_42698961.wav"};
+
         CepstralConfig config;
         config.delta.useDeltas = true;
         config.delta.useDeltaDeltas = true;

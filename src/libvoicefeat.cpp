@@ -5,8 +5,6 @@
 #include "libvoicefeat/dsp/frame_extractor.h"
 #include "libvoicefeat/dsp/window_functiion.h"
 #include "libvoicefeat/dsp/fft_transformer.h"
-#include "libvoicefeat/features/delta.h"
-#include "libvoicefeat/features/mfcc.h"
 
 #include <algorithm>
 #include <cctype>
@@ -14,8 +12,8 @@
 #include <string>
 #include <vector>
 
+#include "libvoicefeat/dsp/resampler.h"
 #include "libvoicefeat/features/feature_builder.h"
-#include "libvoicefeat/utils/path.h"
 
 namespace libvoicefeat
 {
@@ -35,19 +33,15 @@ namespace libvoicefeat
         if (_config.framing.frameSize <= 0 || _config.framing.frameStep <= 0)
             throw std::invalid_argument("Frame size and step must be positive");
 
-        // AudioBuffer working = audio;// temp
-        // if (audio.sampleRate != _config.feature.sampleRate)
-        // {
-        //     throw std::invalid_argument("Sample rate must be equal");
-        //     // TO DO: working = resampleTo(audio, _config.feature.sampleRate);
-        // }
+        AudioBuffer working = audio;
+        if (audio.sampleRate != _config.feature.sampleRate)
+        {
+            int targetSampleRate = _config.feature.sampleRate;
+            working = Resampler::resampleTo(audio, targetSampleRate);
+        }
 
-        int sampleRate = audio.sampleRate > 0 ? audio.sampleRate : _config.feature.sampleRate;
-        if (sampleRate <= 0)
-            throw std::invalid_argument("Sample rate must be positive");
-
-        audio::AudioBuffer working = audio;
-        working.sampleRate = sampleRate;
+        if (working.samples.empty() || working.sampleRate != _config.feature.sampleRate)
+            throw std::invalid_argument("Resampling is failed");
 
         if (_config.preemphasis.usePreEmphasis)
             applyPreEmphasis(working.samples, _config.preemphasis.preEmphasisCoeff);
