@@ -21,6 +21,8 @@ namespace libvoicefeat::features
         [[nodiscard]] FeatureBuilder setMelScale(const MelScale& melScale);
         [[nodiscard]] FeatureBuilder setCepstralType(const CepstralType& cepstralType);
         [[nodiscard]] FeatureBuilder setCompressionType(const CompressionType& compressionType);
+        [[nodiscard]] FeatureBuilder useDeltas(bool use);
+        [[nodiscard]] FeatureBuilder useDeltaDeltas(bool use);
 
         [[nodiscard]] Feature build() const;
 
@@ -41,6 +43,6 @@ namespace libvoicefeat::features
     class FeatureFactory
     {
     public:
-        [[nodiscard]] static Feature createDefaultFeature(const CepstralType& type, const CepstralConfig& cfg);
+        [[nodiscard]] static Feature createDefaultFeature(const CepstralConfig& cfg);
     };
 }

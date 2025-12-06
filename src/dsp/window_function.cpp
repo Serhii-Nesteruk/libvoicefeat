@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <cmath>
 
+using namespace libvoicefeat;
 using namespace libvoicefeat::dsp;
 
 static std::vector<float> buildWindow(int size, WindowType type)

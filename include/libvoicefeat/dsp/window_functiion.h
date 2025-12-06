@@ -2,14 +2,10 @@
 
 #include <vector>
 
+#include "../config.h"
+
 namespace libvoicefeat::dsp
 {
-    enum class WindowType
-    {
-        Hamming,
-        Hanning
-    };
-
     class WindowFunction
     {
     public:

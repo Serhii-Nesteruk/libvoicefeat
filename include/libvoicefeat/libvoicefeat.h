@@ -1,22 +1,33 @@
 #pragma once
 
-#include "libvoicefeat/audio/audio_buffer.h"
 #include "libvoicefeat/config.h"
 
-#include <filesystem>
+#include "features/feature.h"
+#include "utils/path.h"
 
-#include "compat/source_location.h"
+namespace libvoicefeat
+{
+    using namespace features;
+    using namespace audio;
+    using namespace utils;
+    using namespace dsp;
 
-namespace libvoicefeat {
+    class CepstralExtractor
+    {
+    public:
+        explicit CepstralExtractor(const CepstralConfig& config);
 
-    [[nodiscard]] FeatureMatrix computeFileMfcc(
-        const std::filesystem::path& path,
-        const CepstralConfig& config = {}
-    );
+        [[nodiscard]] Feature extractFromFile(const std::string& path);
+        [[nodiscard]] Feature extractFromAudioBuffer(const AudioBuffer& audio);
 
-    [[nodiscard]] FeatureMatrix computeBufferMfcc(
-        const audio::AudioBuffer& audio,
-        const CepstralConfig& config = {}
-    );
+    private:
+        [[nodiscard]] static AudioBuffer loadAudio(const std::filesystem::path& path);
+        static void applyPreEmphasis(std::vector<float>& samples, float coeff);
+        void buildOptions(int sampleRate);
 
+        // TODO: void resampleTo();
+
+        CepstralConfig _config{};
+        FeatureOptions _options{};
+    };
 }

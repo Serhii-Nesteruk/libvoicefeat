@@ -70,6 +70,18 @@ FeatureBuilder FeatureBuilder::setCompressionType(const CompressionType& compres
     return *this;
 }
 
+FeatureBuilder FeatureBuilder::useDeltas(bool use)
+{
+    _feature.useDeltas(use);
+    return *this;
+}
+
+FeatureBuilder FeatureBuilder::useDeltaDeltas(bool use)
+{
+    _feature.useDeltaDeltas(use);
+    return *this;
+}
+
 Feature FeatureBuilder::build() const
 {
     return _feature;
@@ -88,6 +100,8 @@ Feature FeatureDirector::createDefaultMfccFeature(const CepstralConfig& cfg)
             .setMaxFreq(cfg.feature.maxFreq)
             .setCompressionType(CompressionType::Log)
             .setIncludeEnergy(cfg.feature.includeEnergy)
+            .useDeltas(cfg.delta.useDeltas)
+            .useDeltas(cfg.delta.useDeltaDeltas)
             .build();
 }
 
@@ -103,6 +117,8 @@ Feature FeatureDirector::createDefaultGfccFeature(const CepstralConfig& cfg)
             .setMaxFreq(cfg.feature.maxFreq)
             .setCompressionType(CompressionType::Log)
             .setIncludeEnergy(cfg.feature.includeEnergy)
+            .useDeltas(cfg.delta.useDeltas)
+            .useDeltas(cfg.delta.useDeltaDeltas)
             .build();
 }
 
@@ -118,6 +134,8 @@ Feature FeatureDirector::createDefaultLfccFeature(const CepstralConfig& cfg)
             .setMaxFreq(cfg.feature.maxFreq)
             .setCompressionType(CompressionType::Log)
             .setIncludeEnergy(cfg.feature.includeEnergy)
+            .useDeltas(cfg.delta.useDeltas)
+            .useDeltas(cfg.delta.useDeltaDeltas)
             .build();
 }
 
@@ -134,6 +152,8 @@ Feature FeatureDirector::createDefaultPnccFeature(const CepstralConfig& cfg)
             .setMaxFreq(cfg.feature.maxFreq)
             .setCompressionType(CompressionType::PowerNormalized)
             .setIncludeEnergy(cfg.feature.includeEnergy)
+            .useDeltas(cfg.delta.useDeltas)
+            .useDeltas(cfg.delta.useDeltaDeltas)
             .build();
 }
 
@@ -149,12 +169,14 @@ Feature FeatureDirector::createDefaultPlpFeature(const CepstralConfig& cfg)
             .setMaxFreq(cfg.feature.maxFreq)
             .setCompressionType(CompressionType::CubeRoot)
             .setIncludeEnergy(cfg.feature.includeEnergy)
+            .useDeltas(cfg.delta.useDeltas)
+            .useDeltas(cfg.delta.useDeltaDeltas)
             .build();
 }
 
-Feature FeatureFactory::createDefaultFeature(const CepstralType& type, const CepstralConfig& cfg)
+Feature FeatureFactory::createDefaultFeature(const CepstralConfig& cfg)
 {
-    switch (type)
+    switch (cfg.type)
     {
     case CepstralType::MFCC: return FeatureDirector::createDefaultMfccFeature(cfg);
     case CepstralType::LFCC: return FeatureDirector::createDefaultLfccFeature(cfg);

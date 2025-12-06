@@ -13,7 +13,7 @@ namespace libvoicefeat::features
     class Feature
     {
     public:
-        [[nodiscard]] FeatureMatrix compute(const std::vector<Frame>& frames,
+        FeatureMatrix compute(const std::vector<Frame>& frames,
                                             const ITransformer& transformer);
 
         [[nodiscard]] inline FeatureOptions getOptions() const { return _options; }
@@ -31,6 +31,8 @@ namespace libvoicefeat::features
         void setMelScale(MelScale melScale);
         void setCepstralType(CepstralType cepstralType);
         void setCompressionType(CompressionType compressionType);
+        void useDeltas(bool use);
+        void useDeltaDeltas(bool use);
 
         void applyPreEmphasis(std::vector<float>& samples, float coeff);
 
@@ -60,6 +62,8 @@ namespace libvoicefeat::features
         FeatureOptions _options{};
         CepstralType _cepstralType{CepstralType::MFCC};
         FeatureMatrix _computed{};
+
+        bool _useDeltas{false}, _useDelteDeltas{false};
 
         FilterbankParams _fbParams{};
     };

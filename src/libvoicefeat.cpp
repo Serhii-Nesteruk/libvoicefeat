@@ -17,12 +17,59 @@
 #include "libvoicefeat/features/feature_builder.h"
 #include "libvoicefeat/utils/path.h"
 
-namespace
+namespace libvoicefeat
 {
-    using namespace libvoicefeat;
-    using namespace libvoicefeat::utils;
+    CepstralExtractor::CepstralExtractor(const CepstralConfig& config)
+        : _config(config)
+    {
+    }
 
-    libvoicefeat::audio::AudioBuffer loadAudio(const std::filesystem::path& path)
+    Feature CepstralExtractor::extractFromFile(const std::string& path)
+    {
+        auto buffer = loadAudio(path);
+        return extractFromAudioBuffer(buffer);
+    }
+
+    Feature CepstralExtractor::extractFromAudioBuffer(const AudioBuffer& audio)
+    {
+        if (_config.framing.frameSize <= 0 || _config.framing.frameStep <= 0)
+            throw std::invalid_argument("Frame size and step must be positive");
+
+        // AudioBuffer working = audio;// temp
+        // if (audio.sampleRate != _config.feature.sampleRate)
+        // {
+        //     throw std::invalid_argument("Sample rate must be equal");
+        //     // TO DO: working = resampleTo(audio, _config.feature.sampleRate);
+        // }
+
+        int sampleRate = audio.sampleRate > 0 ? audio.sampleRate : _config.feature.sampleRate;
+        if (sampleRate <= 0)
+            throw std::invalid_argument("Sample rate must be positive");
+
+        audio::AudioBuffer working = audio;
+        working.sampleRate = sampleRate;
+
+        if (_config.preemphasis.usePreEmphasis)
+            applyPreEmphasis(working.samples, _config.preemphasis.preEmphasisCoeff);
+
+        FixedFrameExtractor frameExtractor(_config.framing.frameSize, _config.framing.frameStep);
+        auto frames = frameExtractor.extract(working);
+        if (frames.empty())
+            return {};
+
+        WindowFunction window(_config.framing.frameSize, _config.framing.window);
+        for (auto& frame : frames)
+            window.apply(frame.data);
+
+        FFTTransformer transformer;
+        buildOptions(working.sampleRate);
+        auto feature = FeatureFactory::createDefaultFeature(_config);
+        feature.compute(frames, transformer);
+
+        return feature;
+    }
+
+    AudioBuffer CepstralExtractor::loadAudio(const std::filesystem::path& path)
     {
         const auto extStr = path.extension().string();
         std::string ext;
@@ -34,19 +81,19 @@ namespace
 
         if (ext == ".wav")
         {
-            libvoicefeat::audio::WavAudioReader reader;
+            WavAudioReader reader;
             return reader.load(path);
         }
         if (ext == ".mp3")
         {
-            libvoicefeat::audio::Mp3AudioReader reader;
+            Mp3AudioReader reader;
             return reader.load(path);
         }
 
         throw std::invalid_argument("Unsupported audio format: " + path.string());
     }
 
-    void applyPreEmphasis(std::vector<float>& samples, float coeff)
+    void CepstralExtractor::applyPreEmphasis(std::vector<float>& samples, float coeff)
     {
         if (samples.empty())
         {
@@ -62,59 +109,18 @@ namespace
         samples.swap(emphasized);
     }
 
-    FeatureOptions buildOptions(int sampleRate, const CepstralConfig& config)
+    void CepstralExtractor::buildOptions(int sampleRate)
     {
-        FeatureOptions opts;
-        opts.sampleRate = sampleRate;
-        opts.numCoeffs = config.feature.numCoeffs;
-        opts.numFilters = config.feature.numFilters;
-        opts.minFreq = config.feature.minFreq;
-        opts.maxFreq = config.feature.maxFreq > 0.0f ? config.feature.maxFreq : static_cast<float>(sampleRate) / 2.0f;
-        opts.includeEnergy = config.feature.includeEnergy;
-        opts.filterbank = config.feature.filterbank;
-        opts.melScale = config.feature.melScale;
-        opts.compressionType = config.feature.compressionType;
-        return opts;
-    }
-}
-
-namespace libvoicefeat
-{
-    FeatureMatrix computeFileMfcc(const std::filesystem::path& path, const CepstralConfig& config)
-    {
-        auto audio = loadAudio(path);
-        return computeBufferMfcc(audio, config);
-    }
-
-    FeatureMatrix computeBufferMfcc(const audio::AudioBuffer& audio, const CepstralConfig& config)
-    {
-        if (config.framing.frameSize <= 0 || config.framing.frameStep <= 0)
-            throw std::invalid_argument("Frame size and step must be positive");
-
-        int sampleRate = audio.sampleRate > 0 ? audio.sampleRate : config.feature.sampleRate;
-        if (sampleRate <= 0)
-            throw std::invalid_argument("Sample rate must be positive");
-
-        audio::AudioBuffer working = audio;
-        working.sampleRate = sampleRate;
-
-        if (config.preemphasis.usePreEmphasis)
-            applyPreEmphasis(working.samples, config.preemphasis.preEmphasisCoeff);
-
-        dsp::FixedFrameExtractor extractor(config.framing.frameSize, config.framing.frameStep);
-        auto frames = extractor.extract(working);
-        if (frames.empty())
-            return {};
-
-        dsp::HanningWindow window(config.framing.frameSize);
-        for (auto& frame : frames)
-            window.apply(frame.data);
-
-        dsp::FFTTransformer transformer;
-        const auto options = buildOptions(sampleRate, config);
-        auto mfccFeature = features::FeatureDirector::createDefaultMfccFeature(config);
-        const auto base = mfccFeature.compute(frames, transformer);
-        // auto base = features::computeMFCC(frames, transformer, options);
-        return features::appendDeltas(base, config.delta.useDeltas, config.delta.useDeltaDeltas);
+        _options.sampleRate = sampleRate;
+        _options.numCoeffs = _config.feature.numCoeffs;
+        _options.numFilters = _config.feature.numFilters;
+        _options.minFreq = _config.feature.minFreq;
+        _options.maxFreq = _config.feature.maxFreq > 0.0f
+                               ? _config.feature.maxFreq
+                               : static_cast<float>(sampleRate) / 2.0f;
+        _options.includeEnergy = _config.feature.includeEnergy;
+        _options.filterbank = _config.feature.filterbank;
+        _options.melScale = _config.feature.melScale;
+        _options.compressionType = _config.feature.compressionType;
     }
 }

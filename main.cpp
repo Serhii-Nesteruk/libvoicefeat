@@ -6,20 +6,39 @@
 
 #include "libvoicefeat/features/feature_builder.h"
 
+using namespace libvoicefeat::features;
+using namespace libvoicefeat;
+
+void showMfccMatrix(const libvoicefeat::FeatureMatrix& matrix)
+{
+    for (auto& row : matrix)
+    {
+        for (auto& col : row)
+        {
+            std::cout << col << " ";
+        }
+        std::cout << std::endl;
+    }
+}
+
 int main()
 {
-    using namespace libvoicefeat::features;
-
     try
     {
-        const std::filesystem::path audioPath{"./data/common_voice_en_42698961.mp3"};
-        libvoicefeat::CepstralConfig config;
+        const std::filesystem::path audioPath{"./data/common_voice_en_42698961.wav"};
+        CepstralConfig config;
         config.delta.useDeltas = true;
         config.delta.useDeltaDeltas = true;
+        config.type = CepstralType::MFCC;
 
-        auto mfcc = libvoicefeat::computeFileMfcc(audioPath, config);
-        std::cout << "Frames: " << mfcc.size() << std::endl;
-        std::cout << "Coefficients per frame: " << (mfcc.empty() ? 0 : mfcc.front().size()) << std::endl;
+        CepstralExtractor extractor(config);
+
+        auto mfccFeature = extractor.extractFromFile(audioPath);
+        auto mfccMatrix = mfccFeature.getComputedMatrix();
+        std::cout << "Frames: " << mfccMatrix.size() << std::endl;
+        std::cout << "Coefficients per frame: " << (mfccMatrix.empty() ? 0 : mfccMatrix.front().size()) << std::endl;
+
+        // showMfccMatrix(mfcc);
     }
     catch (const std::exception& e)
     {

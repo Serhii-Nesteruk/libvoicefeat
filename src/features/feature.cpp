@@ -2,6 +2,7 @@
 
 #include <algorithm>
 
+#include "libvoicefeat/features/delta.h"
 #include "libvoicefeat/utils/constants.h"
 
 using namespace libvoicefeat::features;
@@ -37,6 +38,7 @@ libvoicefeat::FeatureMatrix Feature::compute(const std::vector<Frame>& frames,
         processFrame(frames[i], spec, filters, nFreqs);
     }
 
+    _computed = appendDeltas(_computed, _useDeltas, _useDelteDeltas);
     return _computed;
 }
 
@@ -93,6 +95,16 @@ void Feature::setCepstralType(CepstralType cepstralType)
 void Feature::setCompressionType(CompressionType compressionType)
 {
     _options.compressionType = compressionType;
+}
+
+void Feature::useDeltas(bool use)
+{
+    _useDeltas = use;
+}
+
+void Feature::useDeltaDeltas(bool use)
+{
+    _useDelteDeltas = use;
 }
 
 void Feature::normalizeFrequencyRange()
