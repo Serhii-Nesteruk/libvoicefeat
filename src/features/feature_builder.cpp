@@ -101,7 +101,7 @@ Feature FeatureDirector::createDefaultMfccFeature(const CepstralConfig& cfg)
             .setCompressionType(CompressionType::Log)
             .setIncludeEnergy(cfg.feature.includeEnergy)
             .useDeltas(cfg.delta.useDeltas)
-            .useDeltas(cfg.delta.useDeltaDeltas)
+            .useDeltaDeltas(cfg.delta.useDeltaDeltas)
             .build();
 }
 
@@ -118,7 +118,7 @@ Feature FeatureDirector::createDefaultGfccFeature(const CepstralConfig& cfg)
             .setCompressionType(CompressionType::Log)
             .setIncludeEnergy(cfg.feature.includeEnergy)
             .useDeltas(cfg.delta.useDeltas)
-            .useDeltas(cfg.delta.useDeltaDeltas)
+            .useDeltaDeltas(cfg.delta.useDeltaDeltas)
             .build();
 }
 
@@ -135,7 +135,7 @@ Feature FeatureDirector::createDefaultLfccFeature(const CepstralConfig& cfg)
             .setCompressionType(CompressionType::Log)
             .setIncludeEnergy(cfg.feature.includeEnergy)
             .useDeltas(cfg.delta.useDeltas)
-            .useDeltas(cfg.delta.useDeltaDeltas)
+            .useDeltaDeltas(cfg.delta.useDeltaDeltas)
             .build();
 }
 
@@ -153,7 +153,7 @@ Feature FeatureDirector::createDefaultPnccFeature(const CepstralConfig& cfg)
             .setCompressionType(CompressionType::PowerNormalized)
             .setIncludeEnergy(cfg.feature.includeEnergy)
             .useDeltas(cfg.delta.useDeltas)
-            .useDeltas(cfg.delta.useDeltaDeltas)
+            .useDeltaDeltas(cfg.delta.useDeltaDeltas)
             .build();
 }
 
@@ -170,7 +170,7 @@ Feature FeatureDirector::createDefaultPlpFeature(const CepstralConfig& cfg)
             .setCompressionType(CompressionType::CubeRoot)
             .setIncludeEnergy(cfg.feature.includeEnergy)
             .useDeltas(cfg.delta.useDeltas)
-            .useDeltas(cfg.delta.useDeltaDeltas)
+            .useDeltaDeltas(cfg.delta.useDeltaDeltas)
             .build();
 }
 

@@ -17,7 +17,9 @@ add_library(libvoicefeat ${libvoicefeat_SOURCES})
 add_library(libvoicefeat::libvoicefeat ALIAS libvoicefeat)
 
 find_package(PkgConfig REQUIRED)
-pkg_check_modules(SAMPLERATE REQUIRED samplerate)
+if (PkgConfig_FOUND)
+    pkg_check_modules(SAMPLERATE REQUIRED samplerate)
+endif()
 
 target_include_directories(libvoicefeat
         PUBLIC
@@ -25,15 +27,16 @@ target_include_directories(libvoicefeat
         $<INSTALL_INTERFACE:include>
         PRIVATE
         ${THIRD_DIR}/minimp3
-        ${SAMPLERATE_INCLUDE_DIRS}
 )
 
 target_compile_features(libvoicefeat PUBLIC cxx_std_17)
 
-target_link_libraries(libvoicefeat
-        PRIVATE
-        ${SAMPLERATE_LIBRARIES}
-)
+if (SAMPLERATE_FOUND)
+    target_include_directories(libvoicefeat PRIVATE ${SAMPLERATE_INCLUDE_DIRS})
+    target_link_libraries(libvoicefeat PRIVATE ${SAMPLERATE_LIBRARIES})
+else()
+    message(WARNING "libsamplerate not found")
+endif()
 
 if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(libvoicefeat PRIVATE -Wall -Wextra -pedantic)
