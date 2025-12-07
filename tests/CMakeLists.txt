@@ -1,5 +1,11 @@
 add_executable(libvoicefeat_mfcc_pipeline_test mfcc_pipeline.cpp)
+add_executable(libvoicefeat_dsp_steps_test dsp_steps.cpp)
+add_executable(libvoicefeat_delta_features_test delta_features.cpp)
 
-target_link_libraries(libvoicefeat_mfcc_pipeline_test PRIVATE libvoicefeat::libvoicefeat)
+foreach(target libvoicefeat_mfcc_pipeline_test libvoicefeat_dsp_steps_test libvoicefeat_delta_features_test)
+    target_link_libraries(${target} PRIVATE libvoicefeat::libvoicefeat)
+endforeach()
 
 add_test(NAME mfcc_pipeline COMMAND libvoicefeat_mfcc_pipeline_test)
+add_test(NAME dsp_steps COMMAND libvoicefeat_dsp_steps_test)
+add_test(NAME delta_features COMMAND libvoicefeat_delta_features_test)

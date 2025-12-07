@@ -30,8 +30,6 @@ libvoicefeat::FeatureMatrix Feature::compute(const std::vector<Frame>& frames,
     const auto fbank = createFilterbank(_options.filterbank, _options.melScale);
     const auto filters = fbank->build(_fbParams);
 
-    processFrame(frames.front(), firstSpectrum, filters, nFreqs);
-
     for (std::size_t i = 0; i < frames.size(); ++i)
     {
         auto spec = transformer.transform(frames[i].data);
