@@ -1,5 +1,7 @@
 #pragma once
 
+#include "libvoicefeat/types.h"
+
 #include "filterbanks/filterbank.h"
 #include "libvoicefeat/config.h"
 #include "libvoicefeat/audio/audio_buffer.h"
@@ -19,8 +21,10 @@ namespace libvoicefeat::features
         [[nodiscard]] inline FeatureOptions getOptions() const { return _options; }
         [[nodiscard]] inline CepstralType getCepstralType() const { return _cepstralType; }
         [[nodiscard]] inline const FeatureMatrix& getComputedMatrix() const { return _computed; }
+        [[nodiscard]] inline const VADFlags& getVADFlags() const { return _vadFlags; }
 
         void setOptions(const FeatureOptions& options);
+        void setVADFlags(const VADFlags& flags);
         void setSampleRate(int sampleRate);
         void setNumFilters(int numFilters);
         void setNumCoeffs(int numCoeffs);
@@ -58,6 +62,9 @@ namespace libvoicefeat::features
         // TODO: Real LPV/PLP implementation
         std::vector<double> plpCepstraPlaceholder(const std::vector<double>& barkEnergies,
                                                   int numCoeffs);
+
+
+        VADFlags _vadFlags;
 
         FeatureOptions _options{};
         CepstralType _cepstralType{CepstralType::MFCC};

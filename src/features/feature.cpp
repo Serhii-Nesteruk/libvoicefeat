@@ -45,6 +45,11 @@ void Feature::setOptions(const FeatureOptions& options)
     _options = options;
 }
 
+void Feature::setVADFlags(const VADFlags& flags)
+{
+    _vadFlags = flags;
+}
+
 void Feature::setSampleRate(int sampleRate)
 {
     _options.sampleRate = sampleRate;

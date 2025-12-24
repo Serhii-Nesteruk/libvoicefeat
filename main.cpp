@@ -36,6 +36,8 @@ int main()
 
         auto mfccFeature = extractor.extractFromFile(audioPath);
         auto mfccMatrix = mfccFeature.getComputedMatrix();
+        auto vadFlags = mfccFeature.getVADFlags();
+
         std::cout << "Frames: " << mfccMatrix.size() << std::endl;
         std::cout << "Coefficients per frame: " << (mfccMatrix.empty() ? 0 : mfccMatrix.front().size()) << std::endl;
 

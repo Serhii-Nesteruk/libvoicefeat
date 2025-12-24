@@ -13,6 +13,7 @@
 #include <vector>
 
 #include "libvoicefeat/dsp/resampler.h"
+#include "libvoicefeat/dsp/voice_activity_detector.h"
 #include "libvoicefeat/features/feature_builder.h"
 
 namespace libvoicefeat
@@ -43,6 +44,8 @@ namespace libvoicefeat
         if (working.samples.empty() || working.sampleRate != _config.feature.sampleRate)
             throw std::invalid_argument("Resampling is failed");
 
+        auto vadFlags = applyVoiceActivityDetector(working);
+
         if (_config.preemphasis.usePreEmphasis)
             applyPreEmphasis(working.samples, _config.preemphasis.preEmphasisCoeff);
 
@@ -58,6 +61,7 @@ namespace libvoicefeat
         FFTTransformer transformer;
         buildOptions(working.sampleRate);
         auto feature = FeatureFactory::createDefaultFeature(_config);
+        feature.setVADFlags(vadFlags);
         feature.compute(frames, transformer);
 
         return feature;
@@ -101,6 +105,12 @@ namespace libvoicefeat
             emphasized[i] = samples[i] - coeff * samples[i - 1];
         }
         samples.swap(emphasized);
+    }
+
+    std::vector<bool> CepstralExtractor::applyVoiceActivityDetector(const AudioBuffer& audio) const
+    {
+        VoiceActivityDetector vad(_config);
+        return vad.detect(audio);
     }
 
     void CepstralExtractor::buildOptions(int sampleRate)

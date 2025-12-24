@@ -16,6 +16,12 @@ FeatureBuilder FeatureBuilder::setSampleRate(int sampleRate)
     return *this;
 }
 
+FeatureBuilder FeatureBuilder::setVADFlags(const VADFlags& flags)
+{
+    _feature.setVADFlags(flags);
+    return *this;
+}
+
 FeatureBuilder FeatureBuilder::setNumFilters(int numFilters)
 {
     _feature.setNumFilters(numFilters);

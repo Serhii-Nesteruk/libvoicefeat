@@ -12,6 +12,7 @@ namespace libvoicefeat::features
 
         [[nodiscard]] FeatureBuilder setOptions(const FeatureOptions& options);
         [[nodiscard]] FeatureBuilder setSampleRate(int sampleRate);
+        [[nodiscard]] FeatureBuilder setVADFlags(const VADFlags& flags);
         [[nodiscard]] FeatureBuilder setNumFilters(int numFilters);
         [[nodiscard]] FeatureBuilder setNumCoeffs(int numCoeffs);
         [[nodiscard]] FeatureBuilder setMinFreq(double minFreq);
