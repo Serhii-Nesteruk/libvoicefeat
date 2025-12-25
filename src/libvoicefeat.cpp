@@ -14,6 +14,7 @@
 
 #include "libvoicefeat/dsp/resampler.h"
 #include "libvoicefeat/dsp/voice_activity_detector.h"
+#include "libvoicefeat/features/cmvn_normalizer.h"
 #include "libvoicefeat/features/feature_builder.h"
 
 namespace libvoicefeat
@@ -44,7 +45,7 @@ namespace libvoicefeat
         if (working.samples.empty() || working.sampleRate != _config.feature.sampleRate)
             throw std::invalid_argument("Resampling is failed");
 
-        auto vadFlags = applyVoiceActivityDetector(working);
+        const auto vadFlags = applyVoiceActivityDetector(working);
 
         if (_config.preemphasis.usePreEmphasis)
             applyPreEmphasis(working.samples, _config.preemphasis.preEmphasisCoeff);
@@ -63,6 +64,9 @@ namespace libvoicefeat
         auto feature = FeatureFactory::createDefaultFeature(_config);
         feature.setVADFlags(vadFlags);
         feature.compute(frames, transformer);
+
+        CmvnNormalizer cmvn(_config);
+        cmvn.apply(feature.getComputedMatrix(), &vadFlags);
 
         return feature;
     }
@@ -107,7 +111,7 @@ namespace libvoicefeat
         samples.swap(emphasized);
     }
 
-    std::vector<bool> CepstralExtractor::applyVoiceActivityDetector(const AudioBuffer& audio) const
+    VADFlags CepstralExtractor::applyVoiceActivityDetector(const AudioBuffer& audio) const
     {
         VoiceActivityDetector vad(_config);
         return vad.detect(audio);

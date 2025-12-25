@@ -1,10 +1,18 @@
 #pragma once
-#include <math.h>
 
 namespace libvoicefeat::constants
 {
+    // --------------------------
+    // MATH CONSTANTS
+    // --------------------------
+
     constexpr double PI = 3.14159265358979323846f;
     constexpr double K_LOG_EPS = 1e-10;
+    constexpr double EPS = 1e-8f;
+
+    // --------------------------
+    // FEATURE CONSTANTS
+    // --------------------------
 
     constexpr int DEFAULT_MFCC_FILTERS_NUM = 26;
     constexpr int DEFAULT_GFCC_FILTERS_NUM = 32;

@@ -94,6 +94,26 @@ namespace libvoicefeat
         int   minSpeechFrames       = 3;
     };
 
+    enum class CmvnType
+    {
+        Utterance,
+        // TODO: implement Global,
+        // TODO: implement Sliding
+    };
+
+    enum class CmvnNormMode
+    {
+        MeanVar,
+        // TODO: implement Mean
+    };
+
+    struct CmvnOptions
+    {
+        CmvnType type = CmvnType::Utterance;
+        CmvnNormMode mode = CmvnNormMode::MeanVar;
+        bool enabled = true;
+    };
+
     struct CepstralConfig
     {
         CepstralType type = CepstralType::MFCC; // type of cepstral feature (MFCC, LFCC, GFCC, PNCC, PLP)
@@ -103,6 +123,7 @@ namespace libvoicefeat
         DeltaOptions delta{}; // delta / delta-delta options
         PreEmphasisOptions preemphasis{}; // pre-emphasis options
         VadOptions vad{};
+        CmvnOptions cmvn{};
     };
 
 

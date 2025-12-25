@@ -20,7 +20,7 @@ namespace libvoicefeat::features
 
         [[nodiscard]] inline FeatureOptions getOptions() const { return _options; }
         [[nodiscard]] inline CepstralType getCepstralType() const { return _cepstralType; }
-        [[nodiscard]] inline const FeatureMatrix& getComputedMatrix() const { return _computed; }
+        [[nodiscard]] inline FeatureMatrix& getComputedMatrix() { return _computed; }
         [[nodiscard]] inline const VADFlags& getVADFlags() const { return _vadFlags; }
 
         void setOptions(const FeatureOptions& options);

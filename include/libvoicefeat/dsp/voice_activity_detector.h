@@ -12,7 +12,7 @@ namespace libvoicefeat::dsp
     class VoiceActivityDetector
     {
     public:
-        VoiceActivityDetector(const CepstralConfig& config);
+        explicit VoiceActivityDetector(const CepstralConfig& config);
         ~VoiceActivityDetector() = default;
         [[nodiscard]] VADFlags detect(const audio::AudioBuffer& audio) const;
 
@@ -24,7 +24,7 @@ namespace libvoicefeat::dsp
 
         [[nodiscard]] float estimateNoiseFloor(const std::vector<float>& energies) const;
         [[nodiscard]] static VADFlags classifyFrames(const std::vector<float>& energies, float threshold);
-        void smoothFlags(std::vector<bool>& flags) const;
+        void smoothFlags(VADFlags& flags) const;
 
         void validateParams();
 

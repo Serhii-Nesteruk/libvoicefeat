@@ -23,7 +23,7 @@ namespace libvoicefeat
     private:
         [[nodiscard]] static AudioBuffer loadAudio(const std::filesystem::path& path);
         static void applyPreEmphasis(std::vector<float>& samples, float coeff);
-        [[nodiscard]] std::vector<bool> applyVoiceActivityDetector(const AudioBuffer& audio) const;
+        [[nodiscard]] VADFlags applyVoiceActivityDetector(const AudioBuffer& audio) const;
         void buildOptions(int sampleRate);
 
         CepstralConfig _config{};

@@ -9,7 +9,7 @@
 using namespace libvoicefeat::features;
 using namespace libvoicefeat;
 
-void showMfccMatrix(const libvoicefeat::FeatureMatrix& matrix)
+void showMfccMatrix(const FeatureMatrix& matrix)
 {
     for (auto& row : matrix)
     {
@@ -36,12 +36,11 @@ int main()
 
         auto mfccFeature = extractor.extractFromFile(audioPath);
         auto mfccMatrix = mfccFeature.getComputedMatrix();
-        auto vadFlags = mfccFeature.getVADFlags();
 
         std::cout << "Frames: " << mfccMatrix.size() << std::endl;
         std::cout << "Coefficients per frame: " << (mfccMatrix.empty() ? 0 : mfccMatrix.front().size()) << std::endl;
 
-        // showMfccMatrix(mfcc);
+        // showMfccMatrix(mfccMatrix);
     }
     catch (const std::exception& e)
     {

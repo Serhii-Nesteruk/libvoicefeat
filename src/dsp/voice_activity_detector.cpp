@@ -73,7 +73,7 @@ float VoiceActivityDetector::estimateNoiseFloor(const std::vector<float>& energi
     std::vector<float> sorted = energies;
     std::sort(sorted.begin(), sorted.end());
 
-    const std::size_t k = static_cast<std::size_t>(
+    const auto k = static_cast<std::size_t>(
         std::floor(static_cast<double>(sorted.size()) * _noiseFloorPercentile));
     const std::size_t count = std::max<std::size_t>(1, k);
     float sum = 0.0f;
@@ -95,24 +95,24 @@ VADFlags VoiceActivityDetector::classifyFrames(const std::vector<float>& energie
     return flags;
 }
 
-void VoiceActivityDetector::smoothFlags(std::vector<bool>& flags) const
+void VoiceActivityDetector::smoothFlags(VADFlags& flags) const
 {
     const std::size_t n = flags.size();
     std::size_t runStart = 0;
     while (runStart < n)
     {
-        while (runStart < n && !flags[runStart])
+        while (runStart < n && !static_cast<bool>(flags[runStart]))
             ++runStart;
         if (runStart >= n)
             break;
         std::size_t runEnd = runStart;
-        while (runEnd < n && flags[runEnd])
+        while (runEnd < n && static_cast<bool>(flags[runEnd]))
             ++runEnd;
         const std::size_t runLength = runEnd - runStart;
         if (runLength < static_cast<std::size_t>(_minSpeechFrames))
         {
             for (std::size_t i = runStart; i < runEnd; ++i)
-                flags[i] = false;
+                flags[i] = VADState::NonSpeech;
         }
         runStart = runEnd;
     }
