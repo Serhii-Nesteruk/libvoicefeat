@@ -39,6 +39,7 @@ int main()
     config.delta.useDeltas = true;
     config.delta.useDeltaDeltas = true;
     config.preemphasis.usePreEmphasis = false;
+    config.cmvn.enabled = false;
 
     libvoicefeat::CepstralExtractor extractor(config);
     auto feature = extractor.extractFromAudioBuffer(buffer);
